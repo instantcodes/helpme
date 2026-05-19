@@ -1,0 +1,109 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-mono,'Courier New',monospace)}
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--green:#39d353;--cyan:#79c0ff;--yellow:#e3b341;--red:#f85149;--purple:#d2a8ff;--text:#e6edf3;--muted:#8b949e}
+.app{background:var(--bg);min-height:100vh;color:var(--text);font-size:13px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.header h1{font-size:15px;font-weight:600;color:var(--cyan);letter-spacing:.5px}
+.badge{background:#21262d;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--muted)}
+.tabs{display:flex;overflow-x:auto;background:var(--surface);border-bottom:1px solid var(--border);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;font-size:12px;cursor:pointer;white-space:nowrap;color:var(--muted);border-bottom:2px solid transparent;transition:.2s;font-family:var(--font-mono,'Courier New',monospace)}
+.tab.active{color:var(--cyan);border-color:var(--cyan)}
+.panel{display:none;padding:16px}
+.panel.active{display:block}
+.section-title{color:var(--yellow);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.code-block{background:#010409;border:1px solid var(--border);border-radius:6px;padding:14px;overflow-x:auto;margin:10px 0;font-size:12px;line-height:1.7}
+.kw{color:var(--purple)}
+.fn{color:var(--cyan)}
+.str{color:var(--yellow)}
+.cmt{color:var(--muted)}
+.num{color:var(--green)}
+.type{color:#ffa657}
+.output-box{background:#010409;border:1px solid var(--green);border-radius:6px;padding:12px;margin:10px 0;font-size:12px;line-height:1.8}
+.output-box .label{color:var(--green);font-size:11px;margin-bottom:6px;letter-spacing:.5px}
+.sim-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin:12px 0}
+.sim-row{display:flex;gap:8px;margin:6px 0;align-items:center;flex-wrap:wrap}
+.sim-label{color:var(--muted);font-size:11px;min-width:70px}
+.bar{height:20px;border-radius:3px;display:flex;align-items:center;padding:0 6px;font-size:11px;font-weight:600;color:#000;transition:width .4s}
+.btn{background:transparent;border:1px solid var(--border);color:var(--cyan);padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-family:var(--font-mono,'Courier New',monospace);transition:.2s}
+.btn:hover{border-color:var(--cyan);background:#0d2230}
+.btn-row{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.gantt{display:flex;margin:10px 0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.gantt-cell{text-align:center;padding:6px 4px;font-size:11px;font-weight:600;border-right:1px solid var(--border);flex:1;min-width:28px}
+.gantt-time{display:flex;margin-top:2px}
+.gantt-time span{font-size:10px;color:var(--muted);flex:1;text-align:center}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center}
+.stat-val{font-size:20px;font-weight:600;color:var(--green)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+.table-wrap{overflow-x:auto;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#21262d;color:var(--muted);padding:6px 10px;text-align:left;font-weight:500}
+td{padding:6px 10px;border-top:1px solid var(--border)}
+tr:hover td{background:#161b22}
+.highlight td{color:var(--green)}
+.input-row{display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap}
+.input-row label{color:var(--muted);font-size:12px;min-width:90px}
+input[type=number]{background:#010409;border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;width:80px;font-size:12px;font-family:var(--font-mono,'Courier New',monospace)}
+input[type=text]{background:#010409;border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:12px;font-family:var(--font-mono,'Courier New',monospace);width:100%}
+.chip{display:inline-block;background:#21262d;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;margin:2px}
+.frame{display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:4px;font-size:12px;margin:2px;transition:.3s}
+.frame.miss{background:#3d1a1a;border-color:var(--red);color:var(--red)}
+.frame.hit{background:#1a3d1a;border-color:var(--green);color:var(--green)}
+.frame.empty{color:var(--muted)}
+.disk-track{position:relative;height:60px;background:#010409;border:1px solid var(--border);border-radius:4px;margin:10px 0;overflow:hidden}
+.disk-pos{position:absolute;top:0;bottom:0;width:2px;background:var(--cyan);transition:left .5s}
+.disk-mark{position:absolute;top:10px;width:8px;height:8px;border-radius:50%;transform:translateX(-4px)}
+.pipe-flow{display:flex;align-items:center;gap:8px;margin:10px 0;flex-wrap:wrap}
+.process-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center;font-size:12px}
+.arrow{color:var(--cyan);font-size:18px}
+.pipe-box{background:#0d2230;border:1px solid var(--cyan);border-radius:4px;padding:6px 14px;color:var(--cyan);font-size:12px}
+.banker-grid{display:grid;gap:4px;margin:8px 0}
+.banker-cell{background:#21262d;border:1px solid var(--border);border-radius:3px;padding:4px 8px;font-size:12px;text-align:center}
+.safe{color:var(--green);font-weight:600}
+.unsafe{color:var(--red);font-weight:600}
+.msg-box{background:#010409;border:1px solid var(--border);border-radius:6px;padding:10px;font-size:12px;margin:6px 0}
+.msg-item{padding:4px 0;border-bottom:1px solid #21262d;display:flex;gap:8px}
+.msg-item:last-child{border:none}
+.pid{color:var(--purple);min-width:40px}
+.sep{border:none;border-top:1px solid var(--border);margin:16px 0}
+</style>
+
+<div class="app">
+<div class="header">
+  <span style="color:var(--green);font-size:18px">⬡</span>
+  <h1>OS Lab — PCCSL407</h1>
+  <span class="badge">Interactive Guide</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('fcfs')">① FCFS</div>
+  <div class="tab" onclick="showTab('fifo')">② FIFO</div>
+  <div class="tab" onclick="showTab('sstf')">③ SSTF</div>
+  <div class="tab" onclick="showTab('pipe')">④ Pipe&Queue</div>
+  <div class="tab" onclick="showTab('banker')">⑤ Banker's</div>
+</div>
+
+<!-- ===== FCFS ===== -->
+<div class="panel active" id="tab-fcfs">
+  <div class="section-title">FCFS CPU Scheduling</div>
+
+  <div class="code-block"><span class="cmt">// FCFS — First Come First Serve (Non-Preemptive)</span>
+<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> n = <span class="num">4</span>;
+  <span class="kw">int</span> at[] = {<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>};  <span class="cmt">// arrival time</span>
+  <span class="kw">int</span> bt[] = {<span class="num">5</span>,<span class="num">3</span>,<span class="num">8</span>,<span class="num">2</span>};  <span class="cmt">// burst time</span>
+  <span class="kw">int</span> ct[<span class="num">4</span>], tat[<span class="num">4</span>], wt[<span class="num">4</span>];
+
+  ct[<span class="num">0</span>] = at[<span class="num">0</span>] + bt[<span class="num">0</span>];
+  <span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">1</span>; i&lt;n; i++) {
+    ct[i] = (ct[i-<span class="num">1</span>] &gt; at[i] ? ct[i-<span class="num">1</span>] : at[i]) + bt[i];
+    tat[i] = ct[i] - at[i];
+    wt[i]  = tat[i] - bt[i];
+  }
+  <span class="cmt">// Print results...</span>
+}
