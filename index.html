@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Lab — Algorithm Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c23;
+    --border: #232830;
+    --accent: #00e5a0;
+    --accent2: #0099ff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #c77dff;
+    --text: #e8ecf0;
+    --muted: #6b7280;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    padding: 2.5rem 3rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0d1117 0%, var(--bg) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: 10%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,153,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.3);
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-family: var(--mono);
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    padding: 1rem 3rem 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--surface);
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 0.8rem 1.4rem;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-btn .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* MAIN CONTENT */
+  .main { padding: 2.5rem 3rem; max-width: 1100px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.6rem;
+    margin-bottom: 1.4rem;
+  }
+  .card-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* INPUTS */
+  .input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  input, textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 120px;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { width: 100%; resize: vertical; min-height: 70px; }
+
+  /* PROCESS TABLE INPUT */
+  .process-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+  }
+  .process-table th {
+    background: var(--surface2);
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    border: 1px solid var(--border);
+  }
+  .process-table td {
+    border: 1px solid var(--border);
+    padding: 0.3rem;
+  }
+  .process-table input {
+    border: none;
+    background: transparent;
+    min-width: 60px;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+  }
+  .process-table input:focus { background: rgba(0,229,160,0.05); }
+
+  /* BUTTONS */
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 0.55rem 1.2rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #00ffb3; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-small {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.72rem;
+  }
+  .btn-row { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; }
+
+  /* OUTPUT AREA */
+  .output-section {
+    margin-top: 1.4rem;
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* GANTT CHART */
+  .gantt-wrap { overflow-x: auto; padding-bottom: 0.5rem; }
+  .gantt {
+    display: flex;
+    align-items: stretch;
+    min-width: max-content;
+    margin: 0.8rem 0 0.2rem;
+    height: 44px;
+  }
+  .gantt-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-right: 1px solid var(--bg);
+    border-top: 1px solid var(--bg);
+    border-bottom: 1px solid var(--bg);
+    min-width: 36px;
+    padding: 0 6px;
+    letter-spacing: 0.05em;
+  }
+  .gantt-labels {
+    display: flex;
+    min-width: max-content;
+  }
+  .gantt-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    position: relative;
+  }
+  .gantt-label::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 0;
+    width: 1px; height: 5px;
+    background: var(--muted);
+  }
+
+  /* RESULTS TABLE */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    margin-top: 0.8rem;
+  }
+  .results-table th {
+    background: var(--surface2);
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+  .results-table td {
+    padding: 0.45rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .results-table tr:last-child td { border-bottom: none; }
+  .results-table tr:hover td { background: rgba(0,229,160,0.03); }
+  .total-row td { color: var(--accent); font-weight: 600; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.7rem 1.2rem;
+    flex: 1;
+    min-width: 130px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-unit { font-size: 0.7rem; color: var(--muted); margin-left: 2px; }
+
+  /* CODE / THEORY */
+  .theory-block {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent2);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #c8d0dc;
+  }
+  .theory-block strong { color: var(--accent); }
+  .theory-block code {
+    font-family: var(--mono);
+    background: rgba(0,229,160,0.08);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+    font-size: 0.82em;
+    color: var(--accent);
+  }
+
+  pre.code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #a8b2c0;
+    margin-top: 0.8rem;
+  }
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .cm { color: #6272a4; font-style: italic; }
+  .st { color: #f1fa8c; }
+  .nm { color: #bd93f9; }
+  .inc { color: #8be9fd; }
+
+  /* PAGE FRAMES VISUAL */
+  .frame-row {
+    display: flex;
+    gap: 4px;
+    margin: 0.3rem 0;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+  .frame-cell {
+    width: 34px; height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .frame-cell.filled { background: rgba(0,229,160,0.12); border-color: var(--accent); color: var(--accent); }
+  .frame-cell.fault { background: rgba(255,107,107,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .frame-cell.empty { color: var(--muted); }
+  .page-ref-label { width: 24px; text-align: right; color: var(--muted); margin-right: 4px; }
+  .fault-marker { width: 14px; color: var(--accent3); font-size: 0.9rem; margin-left: 4px; }
+
+  /* DISK VISUAL */
+  .disk-viz {
+    position: relative;
+    height: 180px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-top: 0.8rem;
+    overflow: hidden;
+  }
+  .disk-track {
+    position: absolute;
+    bottom: 20px;
+    left: 30px; right: 30px;
+    height: 2px;
+    background: var(--border);
+  }
+  .disk-label-row {
+    position: absolute;
+    bottom: 4px;
+    left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+  canvas.disk-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* IPC VISUAL */
+  .ipc-diagram {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+  .ipc-proc {
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    border-radius: 6px;
+    padding: 0.7rem 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent2);
+    text-align: center;
+  }
+  .ipc-arrow {
+    color: var(--accent);
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .ipc-pipe {
+    background: linear-gradient(90deg, rgba(0,229,160,0.15), rgba(0,153,255,0.15));
+    border: 1px dashed var(--accent);
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    min-width: 120px;
+    text-align: center;
+  }
+  .log-output {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.8;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 0.8rem;
+  }
+  .log-ok { color: var(--accent); }
+  .log-err { color: var(--accent3); }
+  .log-info { color: var(--accent2); }
+  .log-warn { color: var(--accent4); }
+
+  /* BANKER */
+  .matrix-grid {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .matrix-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+  .matrix-label { color: var(--muted); width: 30px; font-size: 0.72rem; }
+  .matrix-cell {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    width: 44px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .matrix-cell.safe { background: rgba(0,229,160,0.12); border-color: var(--accent); color: var(--accent); }
+  .matrix-cell.unsafe { background: rgba(255,107,107,0.12); border-color: var(--accent3); color: var(--accent3); }
+
+  .safe-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    padding: 0.4rem 1rem;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-top: 0.8rem;
+  }
+  .safe-badge.safe { background: rgba(0,229,160,0.1); border: 1px solid var(--accent); color: var(--accent); }
+  .safe-badge.unsafe { background: rgba(255,107,107,0.1); border: 1px solid var(--accent3); color: var(--accent3); }
+  .safe-seq { font-family: var(--mono); font-size: 0.9rem; color: var(--accent4); margin-top: 0.5rem; }
+
+  /* COLORS FOR GANTT BLOCKS */
+  .c0 { background: #1a3a2e; color: #00e5a0; }
+  .c1 { background: #1a2a3a; color: #0099ff; }
+  .c2 { background: #3a1a2e; color: #c77dff; }
+  .c3 { background: #3a2e1a; color: #ffd166; }
+  .c4 { background: #3a1a1a; color: #ff6b6b; }
+  .c5 { background: #1a2a1a; color: #90ee90; }
+  .c6 { background: #2a1a3a; color: #da9cf5; }
+  .c7 { background: #2a2a1a; color: #ffeaa7; }
+
+  section.algo-section { margin-bottom: 2.5rem; }
+  .section-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .section-heading .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+  .desc { color: var(--muted); font-size: 0.87rem; margin-bottom: 1.2rem; line-height: 1.6; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    header, .nav-tabs, .main { padding-left: 1.2rem; padding-right: 1.2rem; }
+    .stats-row { flex-direction: column; }
+  }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .error-msg {
+    color: var(--accent3);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">PCCSL407 · OS Lab</div>
+  <h1>Algorithm <span>Explorer</span></h1>
+  <p>FCFS · FIFO Page Replace · SSTF Disk · Pipe & Queue IPC · Banker's Algorithm</p>
+</header>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('fcfs')"><span class="dot" style="background:#00e5a0"></span>FCFS Scheduling</button>
+  <button class="tab-btn" onclick="showTab('fifo')"><span class="dot" style="background:#0099ff"></span>FIFO Page Replace</button>
+  <button class="tab-btn" onclick="showTab('sstf')"><span class="dot" style="background:#c77dff"></span>SSTF Disk</button>
+  <button class="tab-btn" onclick="showTab('ipc')"><span class="dot" style="background:#ffd166"></span>Pipe & Queue IPC</button>
+  <button class="tab-btn" onclick="showTab('banker')"><span class="dot" style="background:#ff6b6b"></span>Banker's Algorithm</button>
+</nav>
+
+<div class="main">
+
+<!-- ============ FCFS ============ -->
+<div class="section active" id="tab-fcfs">
+  <section class="algo-section">
+    <div class="section-heading">First Come First Serve <span class="tag">CPU Scheduling</span></div>
+    <p class="desc">Non-preemptive algorithm — processes execute in arrival order. Simple but can cause the convoy effect where short jobs wait behind long ones.</p>
+
+    <div class="theory-block">
+      <strong>Key Formulas:</strong><br>
+      <code>CT</code> = time when process finishes &nbsp;|&nbsp;
+      <code>TAT = CT − AT</code> (Turnaround Time) &nbsp;|&nbsp;
+      <code>WT = TAT − BT</code> (Waiting Time)
+    </div>
+
+    <div class="card">
+      <div class="card-title">Process Input</div>
+      <div id="fcfs-process-container">
+        <table class="process-table" id="fcfs-table">
+          <thead><tr><th>#</th><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead>
+          <tbody id="fcfs-tbody">
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem">1</td><td><input value="P1" style="width:60px"></td><td><input type="number" value="0" style="width:60px"></td><td><input type="number" value="8" style="width:60px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem">2</td><td><input value="P2" style="width:60px"></td><td><input type="number" value="1" style="width:60px"></td><td><input type="number" value="4" style="width:60px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem">3</td><td><input value="P3" style="width:60px"></td><td><input type="number" value="2" style="width:60px"></td><td><input type="number" value="2" style="width:60px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem">4</td><td><input value="P4" style="width:60px"></td><td><input type="number" value="3" style="width:60px"></td><td><input type="number" value="1" style="width:60px"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="margin-top:0.8rem">
+        <button class="btn btn-secondary btn-small" onclick="addFcfsRow()">+ Add Process</button>
+        <button class="btn btn-primary" onclick="runFCFS()">▶ Run FCFS</button>
+      </div>
+    </div>
+
+    <div id="fcfs-output"></div>
+
+    <hr class="divider">
+    <div class="card-title" style="margin-bottom:0.8rem">C Code — FCFS Implementation</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;stdlib.h&gt;</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="kw">char</span> name[<span class="nm">10</span>];
+    <span class="kw">int</span> at, bt, ct, tat, wt;
+} Process;
+
+<span class="kw">int</span> <span class="fn">cmp</span>(const <span class="kw">void</span>*a, const <span class="kw">void</span>*b) {
+    <span class="kw">return</span> ((Process*)a)->at - ((Process*)b)->at;
+}
+
+<span class="kw">void</span> <span class="fn">fcfs</span>(Process *p, <span class="kw">int</span> n) {
+    qsort(p, n, <span class="kw">sizeof</span>(Process), cmp); <span class="cm">// sort by arrival time</span>
+    <span class="kw">int</span> time = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) {
+        <span class="kw">if</span> (time &lt; p[i].at) time = p[i].at; <span class="cm">// idle wait</span>
+        p[i].ct  = time + p[i].bt;
+        p[i].tat = p[i].ct - p[i].at;
+        p[i].wt  = p[i].tat - p[i].bt;
+        time     = p[i].ct;
+    }
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n = <span class="nm">4</span>;
+    Process p[] = {
+        {<span class="st">"P1"</span>, <span class="nm">0</span>, <span class="nm">8</span>}, {<span class="st">"P2"</span>, <span class="nm">1</span>, <span class="nm">4</span>},
+        {<span class="st">"P3"</span>, <span class="nm">2</span>, <span class="nm">2</span>}, {<span class="st">"P4"</span>, <span class="nm">3</span>, <span class="nm">1</span>}
+    };
+    fcfs(p, n);
+    printf(<span class="st">"%-6s %-4s %-4s %-4s %-5s %-5s\n"</span>,
+           <span class="st">"Proc"</span>,<span class="st">"AT"</span>,<span class="st">"BT"</span>,<span class="st">"CT"</span>,<span class="st">"TAT"</span>,<span class="st">"WT"</span>);
+    <span class="kw">int</span> ttat=<span class="nm">0</span>, twt=<span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++){
+        printf(<span class="st">"%-6s %-4d %-4d %-4d %-5d %-5d\n"</span>,
+               p[i].name, p[i].at, p[i].bt,
+               p[i].ct, p[i].tat, p[i].wt);
+        ttat += p[i].tat; twt += p[i].wt;
+    }
+    printf(<span class="st">"\nAvg TAT = %.2f  Avg WT = %.2f\n"</span>,
+           (<span class="kw">float</span>)ttat/n, (<span class="kw">float</span>)twt/n);
+}</pre>
+  </section>
+</div>
+
+<!-- ============ FIFO PAGE REPLACE ============ -->
+<div class="section" id="tab-fifo">
+  <section class="algo-section">
+    <div class="section-heading">FIFO Page Replacement <span class="tag">Memory Management</span></div>
+    <p class="desc">Replace the page that has been in memory the longest. Simple circular queue approach — when a frame is needed, evict the oldest resident page.</p>
+
+    <div class="theory-block">
+      <strong>Page Fault</strong> occurs when a referenced page is <em>not</em> in any frame.<br>
+      FIFO uses a queue: first page loaded = first page evicted.<br>
+      <strong>Belady's Anomaly:</strong> more frames can sometimes cause <em>more</em> faults in FIFO!
+    </div>
+
+    <div class="card">
+      <div class="card-title">Input Parameters</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>NUMBER OF FRAMES</label>
+          <input type="number" id="fifo-frames" value="3" min="1" max="10" style="width:80px">
+        </div>
+      </div>
+      <div class="input-group" style="margin-bottom:0.8rem">
+        <label>PAGE REFERENCE STRING (space-separated)</label>
+        <input type="text" id="fifo-refs" value="0 1 2 0 1 3 0 3 1 2 1" style="max-width:400px">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runFIFO()">▶ Run FIFO</button>
+        <button class="btn btn-secondary btn-small" onclick="document.getElementById('fifo-refs').value='1 9 3 6 4 1 9 0 7 3 1 8 6 9 3 4 0 2 8 9';document.getElementById('fifo-frames').value=4">Load Example 2</button>
+      </div>
+    </div>
+
+    <div id="fifo-output"></div>
+
+    <hr class="divider">
+    <div class="card-title" style="margin-bottom:0.8rem">C Code — FIFO Page Replacement</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;string.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">isInFrames</span>(<span class="kw">int</span> *frames, <span class="kw">int</span> n, <span class="kw">int</span> page) {
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++)
+        <span class="kw">if</span>(frames[i] == page) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="kw">int</span> <span class="fn">fifo</span>(<span class="kw">int</span> *refs, <span class="kw">int</span> len, <span class="kw">int</span> nf) {
+    <span class="kw">int</span> frames[nf], ptr=<span class="nm">0</span>, faults=<span class="nm">0</span>;
+    memset(frames, -<span class="nm">1</span>, <span class="kw">sizeof</span>(frames));
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;len; i++){
+        <span class="kw">if</span>(!isInFrames(frames, nf, refs[i])){
+            frames[ptr] = refs[i]; <span class="cm">// replace oldest</span>
+            ptr = (ptr+<span class="nm">1</span>) % nf;  <span class="cm">// circular pointer</span>
+            faults++;
+            printf(<span class="st">"Page %d → FAULT\n"</span>, refs[i]);
+        } <span class="kw">else</span> {
+            printf(<span class="st">"Page %d → HIT\n"</span>, refs[i]);
+        }
+    }
+    <span class="kw">return</span> faults;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> refs[] = {<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">3</span>,<span class="nm">0</span>,<span class="nm">3</span>,<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">1</span>};
+    <span class="kw">int</span> n=<span class="nm">11</span>, frames=<span class="nm">3</span>;
+    <span class="kw">int</span> faults = fifo(refs, n, frames);
+    printf(<span class="st">"\nTotal Page Faults: %d\n"</span>, faults);
+    printf(<span class="st">"Page Hits:   %d\n"</span>, n - faults);
+}</pre>
+  </section>
+</div>
+
+<!-- ============ SSTF ============ -->
+<div class="section" id="tab-sstf">
+  <section class="algo-section">
+    <div class="section-heading">SSTF Disk Scheduling <span class="tag">Disk Management</span></div>
+    <p class="desc">Shortest Seek Time First — at each step, serve the request closest to the current head position. Reduces average seek time vs FCFS but may cause starvation of distant requests.</p>
+
+    <div class="theory-block">
+      <strong>Total Head Movement</strong> = sum of |head moves| across all requests.<br>
+      SSTF is greedy — always pick nearest unserved cylinder.
+      May cause <strong>starvation</strong> for requests far from the center of activity.
+    </div>
+
+    <div class="card">
+      <div class="card-title">Input Parameters</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>INITIAL HEAD POSITION</label>
+          <input type="number" id="sstf-head" value="53" style="width:90px">
+        </div>
+        <div class="input-group">
+          <label>DISK SIZE (cylinders)</label>
+          <input type="number" id="sstf-size" value="200" style="width:90px">
+        </div>
+      </div>
+      <div class="input-group" style="margin-bottom:0.8rem">
+        <label>DISK REQUEST QUEUE (space-separated)</label>
+        <input type="text" id="sstf-reqs" value="98 183 41 122 14 124 65 67" style="max-width:400px">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runSSTF()">▶ Run SSTF</button>
+      </div>
+    </div>
+
+    <div id="sstf-output"></div>
+
+    <hr class="divider">
+    <div class="card-title" style="margin-bottom:0.8rem">C Code — SSTF Implementation</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;stdlib.h&gt;</span>
+<span class="inc">#include &lt;limits.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> head = <span class="nm">53</span>;
+    <span class="kw">int</span> reqs[] = {<span class="nm">98</span>,<span class="nm">183</span>,<span class="nm">41</span>,<span class="nm">122</span>,<span class="nm">14</span>,<span class="nm">124</span>,<span class="nm">65</span>,<span class="nm">67</span>};
+    <span class="kw">int</span> n = <span class="nm">8</span>, served[n], total = <span class="nm">0</span>;
+
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) served[i] = <span class="nm">0</span>;
+
+    printf(<span class="st">"Order: %d"</span>, head);
+    <span class="kw">for</span>(<span class="kw">int</span> step=<span class="nm">0</span>; step&lt;n; step++){
+        <span class="kw">int</span> minDist = INT_MAX, idx = -<span class="nm">1</span>;
+        <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++){
+            <span class="kw">if</span>(!served[i]){
+                <span class="kw">int</span> d = abs(reqs[i] - head);
+                <span class="kw">if</span>(d &lt; minDist){ minDist=d; idx=i; }
+            }
+        }
+        served[idx] = <span class="nm">1</span>;
+        total += minDist;
+        head = reqs[idx];
+        printf(<span class="st">" → %d"</span>, head);
+    }
+    printf(<span class="st">"\nTotal Movement: %d cylinders\n"</span>, total);
+}</pre>
+  </section>
+</div>
+
+<!-- ============ IPC ============ -->
+<div class="section" id="tab-ipc">
+  <section class="algo-section">
+    <div class="section-heading">Pipe & Message Queue IPC <span class="tag">Inter-Process Communication</span></div>
+    <p class="desc">IPC allows processes to communicate and synchronize. Simulate how pipe (unidirectional byte stream) and message queue (typed message blocks) work.</p>
+
+    <div class="theory-block">
+      <strong>Pipe:</strong> Unidirectional FIFO byte stream. Parent writes → child reads. Created with <code>pipe(fd)</code>.<br><br>
+      <strong>Message Queue:</strong> Messages have a <code>type</code> field. Sender and receiver can be any process with the queue key. Created with <code>msgget()</code>, sent with <code>msgsnd()</code>, received with <code>msgrcv()</code>.<br><br>
+      <strong>Shared Memory:</strong> Fastest IPC — processes map same physical memory. Needs semaphore for sync.
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pipe Simulation</div>
+      <div class="ipc-diagram">
+        <div class="ipc-proc">Writer<br><span style="font-size:0.7rem;color:var(--muted)">Parent Process</span></div>
+        <div class="ipc-arrow">→</div>
+        <div class="ipc-pipe" id="pipe-content">PIPE [ empty ]</div>
+        <div class="ipc-arrow">→</div>
+        <div class="ipc-proc">Reader<br><span style="font-size:0.7rem;color:var(--muted)">Child Process</span></div>
+      </div>
+      <div class="input-row">
+        <div class="input-group" style="flex:1">
+          <label>MESSAGE TO SEND THROUGH PIPE</label>
+          <input type="text" id="pipe-msg" value="Hello from parent process!" style="max-width:350px">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runPipe()">▶ Simulate Pipe</button>
+      </div>
+      <div id="pipe-log"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Message Queue Simulation</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>MSG TYPE</label>
+          <input type="number" id="mq-type" value="1" min="1" style="width:70px">
+        </div>
+        <div class="input-group" style="flex:1">
+          <label>MESSAGE TEXT</label>
+          <input type="text" id="mq-msg" value="Task: process file report.csv" style="max-width:300px">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runMsgQueue()">▶ Send to Queue</button>
+        <button class="btn btn-secondary btn-small" onclick="receiveMsgQueue()">📨 Receive</button>
+        <button class="btn btn-secondary btn-small" onclick="clearQueue()">🗑 Clear</button>
+      </div>
+      <div id="mq-log"></div>
+    </div>
+
+    <hr class="divider">
+    <div class="card-title" style="margin-bottom:0.8rem">C Code — Pipe IPC</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;unistd.h&gt;</span>
+<span class="inc">#include &lt;string.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> fd[<span class="nm">2</span>];           <span class="cm">// fd[0]=read end, fd[1]=write end</span>
+    <span class="kw">char</span> buf[<span class="nm">100</span>];
+
+    <span class="kw">if</span>(pipe(fd) == -<span class="nm">1</span>) { perror(<span class="st">"pipe"</span>); <span class="kw">return</span> <span class="nm">1</span>; }
+
+    pid_t pid = fork();
+    <span class="kw">if</span>(pid == <span class="nm">0</span>) {           <span class="cm">// CHILD — reader</span>
+        close(fd[<span class="nm">1</span>]);        <span class="cm">// close write end</span>
+        read(fd[<span class="nm">0</span>], buf, <span class="kw">sizeof</span>(buf));
+        printf(<span class="st">"Child received: %s\n"</span>, buf);
+        close(fd[<span class="nm">0</span>]);
+    } <span class="kw">else</span> {                  <span class="cm">// PARENT — writer</span>
+        close(fd[<span class="nm">0</span>]);        <span class="cm">// close read end</span>
+        <span class="kw">char</span> *msg = <span class="st">"Hello from parent!"</span>;
+        write(fd[<span class="nm">1</span>], msg, strlen(msg)+<span class="nm">1</span>);
+        close(fd[<span class="nm">1</span>]);
+        wait(<span class="nm">NULL</span>);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+
+    <div class="card-title" style="margin: 1.2rem 0 0.8rem">C Code — Message Queue IPC</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;sys/ipc.h&gt;</span>
+<span class="inc">#include &lt;sys/msg.h&gt;</span>
+<span class="inc">#include &lt;string.h&gt;</span>
+
+<span class="kw">struct</span> msgbuf {
+    <span class="kw">long</span> mtype;
+    <span class="kw">char</span> mtext[<span class="nm">100</span>];
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    key_t key = ftok(<span class="st">"/tmp"</span>, <span class="nm">65</span>);
+    <span class="kw">int</span> msgid = msgget(key, <span class="nm">0666</span> | IPC_CREAT);
+
+    <span class="cm">/* SENDER */</span>
+    <span class="kw">struct</span> msgbuf msg;
+    msg.mtype = <span class="nm">1</span>;
+    strcpy(msg.mtext, <span class="st">"Hello via message queue!"</span>);
+    msgsnd(msgid, &msg, <span class="kw">sizeof</span>(msg.mtext), <span class="nm">0</span>);
+    printf(<span class="st">"Sent: %s\n"</span>, msg.mtext);
+
+    <span class="cm">/* RECEIVER */</span>
+    <span class="kw">struct</span> msgbuf rcv;
+    msgrcv(msgid, &rcv, <span class="kw">sizeof</span>(rcv.mtext), <span class="nm">1</span>, <span class="nm">0</span>);
+    printf(<span class="st">"Received: %s\n"</span>, rcv.mtext);
+
+    msgctl(msgid, IPC_RMID, <span class="nm">NULL</span>); <span class="cm">// destroy queue</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </section>
+</div>
+
+<!-- ============ BANKER ============ -->
+<div class="section" id="tab-banker">
+  <section class="algo-section">
+    <div class="section-heading">Banker's Algorithm <span class="tag">Deadlock Avoidance</span></div>
+    <p class="desc">Deadlock avoidance algorithm. Checks if granting a resource request leaves the system in a safe state (a state from which all processes can eventually finish).</p>
+
+    <div class="theory-block">
+      <strong>Need[i][j]</strong> = Max[i][j] − Allocation[i][j]<br>
+      <strong>Safe State:</strong> A sequence P₁,P₂,...,Pₙ exists where each process can finish using available + previously released resources.<br>
+      <strong>Safety Algorithm:</strong> Try to find a process whose Need ≤ Work; if found, "finish" it, add its allocation to Work. Repeat. If all finish → safe.
+    </div>
+
+    <div class="card">
+      <div class="card-title">Configuration (3 Resource Types A, B, C)</div>
+      <div class="input-row" style="margin-bottom:1rem">
+        <div class="input-group">
+          <label>TOTAL RESOURCES (A B C)</label>
+          <input type="text" id="bk-total" value="10 5 7" style="width:120px">
+        </div>
+        <div class="input-group">
+          <label>NUM PROCESSES</label>
+          <input type="number" id="bk-procs" value="5" min="2" max="8" style="width:70px" onchange="buildBankerTable()">
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="process-table" id="banker-table">
+          <thead>
+            <tr>
+              <th>Process</th>
+              <th colspan="3">Allocation (A B C)</th>
+              <th colspan="3">Max (A B C)</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>A</th><th>B</th><th>C</th>
+              <th>A</th><th>B</th><th>C</th>
+            </tr>
+          </thead>
+          <tbody id="banker-tbody">
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--accent);font-family:var(--mono);font-size:0.78rem">P0</td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="1" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="7" style="width:44px"></td><td><input type="number" value="5" style="width:44px"></td><td><input type="number" value="3" style="width:44px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--accent);font-family:var(--mono);font-size:0.78rem">P1</td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="3" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--accent);font-family:var(--mono);font-size:0.78rem">P2</td><td><input type="number" value="3" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="9" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--accent);font-family:var(--mono);font-size:0.78rem">P3</td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="1" style="width:44px"></td><td><input type="number" value="1" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;color:var(--accent);font-family:var(--mono);font-size:0.78rem">P4</td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="0" style="width:44px"></td><td><input type="number" value="2" style="width:44px"></td><td><input type="number" value="4" style="width:44px"></td><td><input type="number" value="3" style="width:44px"></td><td><input type="number" value="3" style="width:44px"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="btn-row" style="margin-top:0.8rem">
+        <button class="btn btn-primary" onclick="runBanker()">▶ Run Safety Algorithm</button>
+      </div>
+    </div>
+
+    <div id="banker-output"></div>
+
+    <hr class="divider">
+    <div class="card-title" style="margin-bottom:0.8rem">C Code — Banker's Safety Algorithm</div>
+    <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="inc">#include &lt;string.h&gt;</span>
+
+<span class="kw">#define</span> P <span class="nm">5</span>
+<span class="kw">#define</span> R <span class="nm">3</span>
+
+<span class="kw">int</span> alloc[P][R]={{<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>},{<span class="nm">2</span>,<span class="nm">0</span>,<span class="nm">0</span>},{<span class="nm">3</span>,<span class="nm">0</span>,<span class="nm">2</span>},{<span class="nm">2</span>,<span class="nm">1</span>,<span class="nm">1</span>},{<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">2</span>}};
+<span class="kw">int</span>  max[P][R]={{<span class="nm">7</span>,<span class="nm">5</span>,<span class="nm">3</span>},{<span class="nm">3</span>,<span class="nm">2</span>,<span class="nm">2</span>},{<span class="nm">9</span>,<span class="nm">0</span>,<span class="nm">2</span>},{<span class="nm">2</span>,<span class="nm">2</span>,<span class="nm">2</span>},{<span class="nm">4</span>,<span class="nm">3</span>,<span class="nm">3</span>}};
+<span class="kw">int</span>  avail[R] = {<span class="nm">3</span>,<span class="nm">3</span>,<span class="nm">2</span>};
+
+<span class="kw">int</span> <span class="fn">safetyCheck</span>(<span class="kw">int</span> seq[]) {
+    <span class="kw">int</span> work[R], finish[P]={};
+    memcpy(work, avail, <span class="kw">sizeof</span>(work));
+    <span class="kw">int</span> count=<span class="nm">0</span>;
+    <span class="kw">while</span>(count &lt; P) {
+        <span class="kw">int</span> found = <span class="nm">0</span>;
+        <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;P; i++) {
+            <span class="kw">if</span>(finish[i]) <span class="kw">continue</span>;
+            <span class="kw">int</span> j;
+            <span class="kw">for</span>(j=<span class="nm">0</span>; j&lt;R; j++)
+                <span class="kw">if</span>(max[i][j]-alloc[i][j] > work[j]) <span class="kw">break</span>;
+            <span class="kw">if</span>(j==R) {  <span class="cm">// Need ≤ Work</span>
+                <span class="kw">for</span>(<span class="kw">int</span> k=<span class="nm">0</span>; k&lt;R; k++) work[k] += alloc[i][k];
+                finish[i]=<span class="nm">1</span>; seq[count++]=i; found=<span class="nm">1</span>;
+            }
+        }
+        <span class="kw">if</span>(!found) <span class="kw">return</span> <span class="nm">0</span>; <span class="cm">// unsafe</span>
+    }
+    <span class="kw">return</span> <span class="nm">1</span>;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> seq[P];
+    <span class="kw">if</span>(safetyCheck(seq)) {
+        printf(<span class="st">"SAFE. Sequence: "</span>);
+        <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;P; i++) printf(<span class="st">"P%d "</span>, seq[i]);
+    } <span class="kw">else</span> printf(<span class="st">"UNSAFE STATE — deadlock possible!\n"</span>);
+}</pre>
+  </section>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ==================== TAB SWITCHING ====================
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+}
+
+// ==================== COLOR HELPERS ====================
+const COLORS = ['c0','c1','c2','c3','c4','c5','c6','c7'];
+function procColor(name) {
+  let hash = 0;
+  for(let c of name) hash = (hash * 31 + c.charCodeAt(0)) % COLORS.length;
+  return COLORS[hash];
+}
+
+// ==================== GANTT BUILDER ====================
+function buildGantt(timeline) {
+  // timeline: [{name, start, end}, ...]
+  const wrap = document.createElement('div');
+  wrap.className = 'gantt-wrap';
+  const gantt = document.createElement('div');
+  gantt.className = 'gantt';
+  const labelRow = document.createElement('div');
+  labelRow.className = 'gantt-labels';
+
+  const totalTime = timeline[timeline.length-1].end;
+  const scale = Math.max(36, Math.min(80, Math.floor(600/(timeline.length||1))));
+
+  // first label
+  const lbl0 = document.createElement('span');
+  lbl0.className = 'gantt-label';
+  lbl0.style.width = '0px';
+  lbl0.textContent = timeline[0].start;
+  labelRow.appendChild(lbl0);
+
+  for(let seg of timeline) {
+    const dur = seg.end - seg.start;
+    const w = Math.max(36, dur * scale);
+    const blk = document.createElement('div');
+    blk.className = `gantt-block ${procColor(seg.name)}`;
+    blk.style.width = w + 'px';
+    blk.style.minWidth = w + 'px';
+    blk.textContent = seg.name;
+    gantt.appendChild(blk);
+
+    const lbl = document.createElement('span');
+    lbl.className = 'gantt-label';
+    lbl.style.width = w + 'px';
+    lbl.style.display = 'inline-block';
+    lbl.style.textAlign = 'right';
+    lbl.textContent = seg.end;
+    labelRow.appendChild(lbl);
+  }
+
+  wrap.appendChild(gantt);
+  wrap.appendChild(labelRow);
+  return wrap;
+}
+
+// ==================== FCFS ====================
+function addFcfsRow() {
+  const tbody = document.getElementById('fcfs-tbody');
+  const n = tbody.rows.length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td style="padding:0.3rem 0.5rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem">${n}</td><td><input value="P${n}" style="width:60px"></td><td><input type="number" value="0" style="width:60px"></td><td><input type="number" value="1" style="width:60px"></td>`;
+  tbody.appendChild(tr);
+}
+
+function getFcfsData() {
+  const rows = document.querySelectorAll('#fcfs-tbody tr');
+  return Array.from(rows).map(r => {
+    const cells = r.querySelectorAll('input');
+    return { name: cells[0].value, at: +cells[1].value, bt: +cells[2].value };
+  });
+}
+
+function runFCFS() {
+  let procs = getFcfsData();
+  procs.sort((a,b) => a.at !== b.at ? a.at - b.at : 0);
+
+  let time = 0, timeline = [];
+  for(let p of procs) {
+    if(time < p.at) time = p.at;
+    p.start = time;
+    p.ct = time + p.bt;
+    p.tat = p.ct - p.at;
+    p.wt = p.tat - p.bt;
+    timeline.push({ name: p.name, start: time, end: p.ct });
+    time = p.ct;
+  }
+
+  const avgTAT = (procs.reduce((s,p) => s+p.tat, 0) / procs.length).toFixed(2);
+  const avgWT  = (procs.reduce((s,p) => s+p.wt, 0)  / procs.length).toFixed(2);
+
+  const out = document.getElementById('fcfs-output');
+  out.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'output-section';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="card-title">Gantt Chart</div>';
+  card.appendChild(buildGantt(timeline));
+  div.appendChild(card);
+
+  const tcard = document.createElement('div');
+  tcard.className = 'card';
+  tcard.innerHTML = `<div class="card-title">Results Table</div>
+    <table class="results-table">
+      <thead><tr><th>Process</th><th>AT</th><th>BT</th><th>CT</th><th>TAT</th><th>WT</th></tr></thead>
+      <tbody>
+        ${procs.map(p=>`<tr><td style="color:var(--accent)">${p.name}</td><td>${p.at}</td><td>${p.bt}</td><td>${p.ct}</td><td>${p.tat}</td><td>${p.wt}</td></tr>`).join('')}
+        <tr class="total-row"><td colspan="4">Averages</td><td>${avgTAT} ms</td><td>${avgWT} ms</td></tr>
+      </tbody>
+    </table>`;
+  div.appendChild(tcard);
+
+  const scard = document.createElement('div');
+  scard.className = 'stats-row';
+  scard.innerHTML = `
+    <div class="stat-box"><div class="stat-label">Avg Turnaround Time</div><div class="stat-value">${avgTAT}<span class="stat-unit">ms</span></div></div>
+    <div class="stat-box"><div class="stat-label">Avg Waiting Time</div><div class="stat-value">${avgWT}<span class="stat-unit">ms</span></div></div>
+    <div class="stat-box"><div class="stat-label">Total Processes</div><div class="stat-value">${procs.length}</div></div>`;
+  div.appendChild(scard);
+  out.appendChild(div);
+}
+
+// ==================== FIFO PAGE REPLACEMENT ====================
+function runFIFO() {
+  const nf = parseInt(document.getElementById('fifo-frames').value);
+  const refs = document.getElementById('fifo-refs').value.trim().split(/\s+/).map(Number);
+  if(isNaN(nf) || nf < 1 || refs.some(isNaN)) {
+    document.getElementById('fifo-output').innerHTML = '<p class="error-msg">Invalid input.</p>';
+    return;
+  }
+
+  const frames = new Array(nf).fill(-1);
+  let ptr = 0, faults = 0;
+  const steps = [];
+
+  for(let ref of refs) {
+    const inFrame = frames.includes(ref);
+    let replaced = -1;
+    if(!inFrame) {
+      replaced = frames[ptr];
+      frames[ptr] = ref;
+      ptr = (ptr + 1) % nf;
+      faults++;
+    }
+    steps.push({ ref, frames: [...frames], fault: !inFrame, replaced });
+  }
+
+  const hits = refs.length - faults;
+  const out = document.getElementById('fifo-output');
+  out.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'output-section';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-title">Step-by-Step Trace (${nf} frames)</div>
+    <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem">
+      <span style="color:var(--accent)">■</span> Hit &nbsp;
+      <span style="color:var(--accent3)">■</span> Page Fault
+    </div>`;
+
+  // Show compact grid
+  const grid = document.createElement('div');
+  grid.style.overflowX = 'auto';
+  let html = '<div style="min-width:max-content">';
+  // Header row
+  html += '<div class="frame-row"><span class="page-ref-label">Ref</span>';
+  for(let s of steps) html += `<div style="width:34px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:0.72rem;color:${s.fault?'var(--accent3)':'var(--accent)'};font-weight:600">${s.ref}</div>`;
+  html += '<span style="width:14px"></span></div>';
+  // Frame rows
+  for(let f=0; f<nf; f++) {
+    html += '<div class="frame-row">';
+    html += `<span class="page-ref-label">F${f}</span>`;
+    for(let s of steps) {
+      const val = s.frames[f];
+      const cls = val === -1 ? 'empty' : (s.fault && s.frames[f] === s.ref && f === (f) ? 'fault' : 'filled');
+      html += `<div class="frame-cell ${val === s.ref && s.fault ? 'fault' : val !== -1 ? 'filled' : 'empty'}">${val === -1 ? '·' : val}</div>`;
+    }
+    // fault markers
+    html += '</div>';
+  }
+  // fault row
+  html += '<div class="frame-row"><span class="page-ref-label"></span>';
+  for(let s of steps) html += `<div style="width:34px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem">${s.fault ? '<span style="color:var(--accent3)">F</span>' : ''}</div>`;
+  html += '</div>';
+  html += '</div>';
+  grid.innerHTML = html;
+  card.appendChild(grid);
+  div.appendChild(card);
+
+  const scard = document.createElement('div');
+  scard.className = 'stats-row';
+  scard.innerHTML = `
+    <div class="stat-box"><div class="stat-label">Page Faults</div><div class="stat-value" style="color:var(--accent3)">${faults}</div></div>
+    <div class="stat-box"><div class="stat-label">Page Hits</div><div class="stat-value">${hits}</div></div>
+    <div class="stat-box"><div class="stat-label">Fault Rate</div><div class="stat-value">${(faults/refs.length*100).toFixed(1)}<span class="stat-unit">%</span></div></div>
+    <div class="stat-box"><div class="stat-label">References</div><div class="stat-value">${refs.length}</div></div>`;
+  div.appendChild(scard);
+  out.appendChild(div);
+}
+
+// ==================== SSTF ====================
+function runSSTF() {
+  const head0 = parseInt(document.getElementById('sstf-head').value);
+  const diskSize = parseInt(document.getElementById('sstf-size').value);
+  const reqs = document.getElementById('sstf-reqs').value.trim().split(/\s+/).map(Number);
+  if(isNaN(head0) || reqs.some(isNaN)) return;
+
+  const served = new Array(reqs.length).fill(false);
+  let head = head0, total = 0;
+  const order = [head0];
+  const moves = [];
+
+  for(let step = 0; step < reqs.length; step++) {
+    let minDist = Infinity, idx = -1;
+    for(let i = 0; i < reqs.length; i++) {
+      if(!served[i]) {
+        const d = Math.abs(reqs[i] - head);
+        if(d < minDist) { minDist = d; idx = i; }
+      }
+    }
+    served[idx] = true;
+    total += minDist;
+    moves.push({ from: head, to: reqs[idx], dist: minDist });
+    head = reqs[idx];
+    order.push(head);
+  }
+
+  const out = document.getElementById('sstf-output');
+  out.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'output-section';
+
+  // Order card
+  const ocard = document.createElement('div');
+  ocard.className = 'card';
+  ocard.innerHTML = `<div class="card-title">Service Order & Head Movements</div>
+    <table class="results-table">
+      <thead><tr><th>Step</th><th>From</th><th>To</th><th>Distance</th></tr></thead>
+      <tbody>
+        <tr><td>Start</td><td>—</td><td style="color:var(--accent)">${head0}</td><td>—</td></tr>
+        ${moves.map((m,i) => `<tr><td>${i+1}</td><td>${m.from}</td><td style="color:var(--accent)">${m.to}</td><td style="color:var(--accent4)">${m.dist}</td></tr>`).join('')}
+        <tr class="total-row"><td colspan="3">Total Head Movement</td><td>${total} cylinders</td></tr>
+      </tbody>
+    </table>`;
+  div.appendChild(ocard);
+
+  // Disk visualization
+  const vcard = document.createElement('div');
+  vcard.className = 'card';
+  vcard.innerHTML = '<div class="card-title">Disk Head Movement Visualization</div>';
+  const canvas = document.createElement('canvas');
+  canvas.width = 700; canvas.height = 160;
+  canvas.style.cssText = 'width:100%;height:160px;display:block';
+  vcard.appendChild(canvas);
+  div.appendChild(vcard);
+
+  const scard = document.createElement('div');
+  scard.className = 'stats-row';
+  scard.innerHTML = `
+    <div class="stat-box"><div class="stat-label">Total Movement</div><div class="stat-value" style="color:var(--accent3)">${total}<span class="stat-unit">cyl</span></div></div>
+    <div class="stat-box"><div class="stat-label">Requests Served</div><div class="stat-value">${reqs.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Avg per Request</div><div class="stat-value">${(total/reqs.length).toFixed(1)}<span class="stat-unit">cyl</span></div></div>`;
+  div.appendChild(scard);
+
+  out.appendChild(div);
+
+  // Draw canvas
+  requestAnimationFrame(() => {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const PAD = 50, TOP = 20, BOT = H - 30;
+    ctx.clearRect(0, 0, W, H);
+
+    function cx(val) { return PAD + (val / diskSize) * (W - 2*PAD); }
+
+    // track line
+    ctx.strokeStyle = '#232830';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, BOT); ctx.lineTo(W-PAD, BOT); ctx.stroke();
+
+    // tick marks for requests
+    const allPts = [head0, ...reqs];
+    const uniq = [...new Set(allPts)].sort((a,b)=>a-b);
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    for(let v of uniq) {
+      const x = cx(v);
+      ctx.beginPath(); ctx.moveTo(x, BOT); ctx.lineTo(x, BOT+5); ctx.stroke();
+      ctx.fillText(v, x, BOT+16);
+    }
+
+    // draw path
+    const pts = order.map((v,i) => ({ x: cx(v), y: TOP + i * ((BOT-TOP-10)/(order.length-1)) }));
+    ctx.strokeStyle = '#00e5a0';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.stroke();
+
+    // dots
+    for(let i=0; i<pts.length; i++) {
+      ctx.beginPath();
+      ctx.arc(pts[i].x, pts[i].y, i===0?5:3.5, 0, Math.PI*2);
+      ctx.fillStyle = i===0 ? '#ffd166' : '#00e5a0';
+      ctx.fill();
+    }
+
+    // start label
+    ctx.fillStyle = '#ffd166';
+    ctx.font = 'bold 10px JetBrains Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('HEAD', pts[0].x + 7, pts[0].y + 4);
+  });
+}
+
+// ==================== IPC SIMULATION ====================
+const mqStorage = [];
+
+function log(containerId, type, msg) {
+  const container = document.getElementById(containerId);
+  if(!container.querySelector('.log-output')) {
+    container.innerHTML = '<div class="log-output"></div>';
+  }
+  const log = container.querySelector('.log-output');
+  const line = document.createElement('div');
+  line.className = `log-${type}`;
+  const ts = new Date().toLocaleTimeString('en-US', {hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  line.textContent = `[${ts}] ${msg}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function runPipe() {
+  const msg = document.getElementById('pipe-msg').value;
+  const pipeEl = document.getElementById('pipe-content');
+  const logEl = document.getElementById('pipe-log');
+  logEl.innerHTML = '';
+
+  log('pipe-log', 'info', 'fork() → child process created (PID: ' + Math.floor(1000+Math.random()*8000) + ')');
+  setTimeout(() => {
+    log('pipe-log', 'ok', `Parent writes ${msg.length+1} bytes to pipe fd[1]`);
+    pipeEl.textContent = 'PIPE [ ' + msg.substring(0,20) + (msg.length>20?'…':'') + ' ]';
+    pipeEl.style.borderColor = 'var(--accent)';
+  }, 400);
+  setTimeout(() => {
+    log('pipe-log', 'ok', 'close(fd[1]) → write end closed');
+    log('pipe-log', 'warn', 'Child: read(fd[0], buf, 100) → waiting...');
+  }, 900);
+  setTimeout(() => {
+    log('pipe-log', 'ok', `Child received: "${msg}"`);
+    pipeEl.textContent = 'PIPE [ empty ]';
+    pipeEl.style.borderColor = 'var(--accent)';
+    log('pipe-log', 'info', 'close(fd[0]) → read end closed. Pipe destroyed.');
+    log('pipe-log', 'ok', `✓ ${msg.length+1} bytes transferred successfully`);
+  }, 1500);
+}
+
+function runMsgQueue() {
+  const type = parseInt(document.getElementById('mq-type').value) || 1;
+  const msg = document.getElementById('mq-msg').value;
+  const id = Math.floor(Math.random()*90000+10000);
+  mqStorage.push({ id, type, msg, ts: new Date() });
+
+  if(!document.getElementById('mq-log').querySelector('.log-output')) {
+    document.getElementById('mq-log').innerHTML = '<div class="log-output"></div>';
+  }
+  log('mq-log', 'info', `msgget(key=0x4132, IPC_CREAT) → msqid=${id}`);
+  setTimeout(() => {
+    log('mq-log', 'ok', `msgsnd(${id}, {mtype=${type}, mtext="${msg}"}, 0) → 0`);
+    log('mq-log', 'ok', `Queue depth: ${mqStorage.length} message(s)`);
+  }, 300);
+}
+
+function receiveMsgQueue() {
+  if(mqStorage.length === 0) {
+    log('mq-log', 'err', 'msgrcv() → ENOMSG: No message of desired type');
+    return;
+  }
+  const m = mqStorage.shift();
+  log('mq-log', 'warn', `msgrcv(msqid=${m.id}, mtype=${m.type}) → reading...`);
+  setTimeout(() => {
+    log('mq-log', 'ok', `Received: {mtype=${m.type}, mtext="${m.msg}"}`);
+    log('mq-log', 'info', `Queue depth: ${mqStorage.length} message(s)`);
+  }, 400);
+}
+
+function clearQueue() {
+  mqStorage.length = 0;
+  log('mq-log', 'info', 'msgctl(IPC_RMID) → message queue destroyed');
+}
+
+// ==================== BANKER'S ALGORITHM ====================
+function getBankerData() {
+  const rows = document.querySelectorAll('#banker-tbody tr');
+  const n = rows.length;
+  const allocation = [], max = [];
+  for(let r of rows) {
+    const inputs = r.querySelectorAll('input');
+    allocation.push([+inputs[0].value, +inputs[1].value, +inputs[2].value]);
+    max.push([+inputs[3].value, +inputs[4].value, +inputs[5].value]);
+  }
+  const totalStr = document.getElementById('bk-total').value.trim().split(/\s+/).map(Number);
+  const total = [totalStr[0]||10, totalStr[1]||5, totalStr[2]||7];
+  // compute available = total - sum(allocation)
+  const avail = [...total];
+  for(let i=0; i<n; i++) for(let j=0; j<3; j++) avail[j] -= allocation[i][j];
+  return { n, allocation, max, avail, total };
+}
+
+function runBanker() {
+  const { n, allocation, max, avail } = getBankerData();
+  const need = allocation.map((a,i) => [max[i][0]-a[0], max[i][1]-a[1], max[i][2]-a[2]]);
+
+  if(avail.some(v => v < 0)) {
+    document.getElementById('banker-output').innerHTML = '<p class="error-msg">⚠ Allocation exceeds total resources. Check inputs.</p>';
+    return;
+  }
+
+  // Safety algorithm
+  const work = [...avail];
+  const finish = new Array(n).fill(false);
+  const seq = [];
+  const steps = [];
+
+  let changed = true;
+  while(changed) {
+    changed = false;
+    for(let i=0; i<n; i++) {
+      if(finish[i]) continue;
+      if(need[i].every((v,j) => v <= work[j])) {
+        steps.push({ proc: i, workBefore: [...work], need: [...need[i]], alloc: [...allocation[i]] });
+        for(let j=0; j<3; j++) work[j] += allocation[i][j];
+        finish[i] = true;
+        seq.push(i);
+        changed = true;
+      }
+    }
+  }
+
+  const safe = seq.length === n;
+  const out = document.getElementById('banker-output');
+  out.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'output-section';
+
+  // Need matrix
+  const nc = document.createElement('div');
+  nc.className = 'card';
+  nc.innerHTML = `<div class="card-title">Need Matrix & Available Resources</div>
+    <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem">
+      Need[i][j] = Max[i][j] − Allocation[i][j] &nbsp;|&nbsp; Available = ${avail.join(' ')}
+    </div>
+    <table class="results-table">
+      <thead><tr><th>Process</th><th>Alloc (A B C)</th><th>Max (A B C)</th><th>Need (A B C)</th></tr></thead>
+      <tbody>
+        ${allocation.map((a,i) => `<tr>
+          <td style="color:var(--accent)">P${i}</td>
+          <td>${a.join(' ')}</td>
+          <td>${max[i].join(' ')}</td>
+          <td style="color:${need[i].some(v=>v<0)?'var(--accent3)':'var(--accent4)'}">${need[i].join(' ')}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  div.appendChild(nc);
+
+  // Steps
+  if(steps.length > 0) {
+    const sc = document.createElement('div');
+    sc.className = 'card';
+    sc.innerHTML = `<div class="card-title">Safety Algorithm Trace</div>
+      <table class="results-table">
+        <thead><tr><th>Step</th><th>Process</th><th>Work Before</th><th>Need ≤ Work?</th><th>Work After</th></tr></thead>
+        <tbody>
+          ${steps.map((s,i) => {
+            const wafter = s.workBefore.map((w,j) => w + s.alloc[j]);
+            return `<tr>
+              <td>${i+1}</td>
+              <td style="color:var(--accent)">P${s.proc}</td>
+              <td>${s.workBefore.join(' ')}</td>
+              <td style="color:var(--accent)">[${s.need.join(',')}] ≤ [${s.workBefore.join(',')}] ✓</td>
+              <td style="color:var(--accent4)">${wafter.join(' ')}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+    div.appendChild(sc);
+  }
+
+  // Result
+  const rc = document.createElement('div');
+  rc.className = 'card';
+  const badge = document.createElement('div');
+  badge.className = `safe-badge ${safe ? 'safe' : 'unsafe'}`;
+  badge.innerHTML = safe ? `✓ SAFE STATE` : `✗ UNSAFE STATE`;
+  rc.appendChild(badge);
+
+  if(safe) {
+    const seqEl = document.createElement('div');
+    seqEl.className = 'safe-seq';
+    seqEl.innerHTML = `Safe Sequence: <strong>${seq.map(i => `P${i}`).join(' → ')}</strong>`;
+    rc.appendChild(seqEl);
+  } else {
+    const msg = document.createElement('p');
+    msg.style.cssText = 'font-family:var(--mono);font-size:0.82rem;color:var(--accent3);margin-top:0.5rem';
+    msg.textContent = 'System may deadlock. No safe sequence found.';
+    rc.appendChild(msg);
+  }
+  div.appendChild(rc);
+  out.appendChild(div);
+}
+
+// Run FCFS on load
+window.addEventListener('load', () => { runFCFS(); });
+</script>
+</body>
+</html>
