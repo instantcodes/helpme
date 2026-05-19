@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OS Lab PCCSL407 – Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0d14;
+  --surface: #11151f;
+  --card: #161b28;
+  --border: #1e2535;
+  --accent: #00e5ff;
+  --accent2: #7c4dff;
+  --accent3: #ff6b35;
+  --text: #e8eaf0;
+  --muted: #7a8099;
+  --green: #00e676;
+  --yellow: #ffd740;
+  --red: #ff5252;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1000; opacity: .4;
+}
+
+/* ── HEADER ── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,13,20,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; gap: 1rem;
+}
+.logo {
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.logo span { color: var(--muted); }
+
+nav { display: flex; gap: .25rem; flex-wrap: wrap; }
+nav a {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: .3rem .6rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all .2s;
+  white-space: nowrap;
+}
+nav a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── HERO ── */
+.hero {
+  max-width: 1200px; margin: 0 auto;
+  padding: 4rem 1.5rem 3rem;
+  position: relative;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--mono); font-size: .72rem;
+  color: var(--accent); border: 1px solid var(--accent);
+  padding: .25rem .75rem; border-radius: 2rem;
+  margin-bottom: 1.5rem;
+  animation: fadeUp .6s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+
+h1 {
+  font-family: var(--sans);
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  animation: fadeUp .6s .1s ease both;
+}
+h1 .accent { color: var(--accent); }
+h1 .accent2 { color: var(--accent2); }
+
+.hero-sub {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 560px;
+  animation: fadeUp .6s .2s ease both;
+}
+
+.stats-row {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  margin-top: 2.5rem;
+  animation: fadeUp .6s .3s ease both;
+}
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .75rem 1.25rem;
+  display: flex; flex-direction: column;
+}
+.stat-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+.stat-lbl { font-size: .72rem; color: var(--muted); margin-top: .1rem; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:none; }
+}
+
+/* ── LAYOUT ── */
+.main-grid {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── SIDEBAR TOC ── */
+.toc {
+  position: sticky; top: 76px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.toc::-webkit-scrollbar { width: 4px; }
+.toc::-webkit-scrollbar-track { background: transparent; }
+.toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.toc-title {
+  font-family: var(--mono); font-size: .7rem;
+  color: var(--accent); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 1rem;
+}
+.toc ul { list-style: none; display: flex; flex-direction: column; gap: .15rem; }
+.toc a {
+  display: block;
+  font-family: var(--mono); font-size: .72rem;
+  color: var(--muted); text-decoration: none;
+  padding: .3rem .5rem; border-radius: 4px;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+}
+.toc a:hover { color: var(--text); border-left-color: var(--accent); background: rgba(0,229,255,.05); }
+.toc .toc-group { margin-top: .75rem; }
+.toc .toc-group-title {
+  font-family: var(--mono); font-size: .65rem;
+  color: var(--accent2); text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: .25rem; padding: 0 .5rem;
+}
+
+/* ── CONTENT AREA ── */
+.content { display: flex; flex-direction: column; gap: 2.5rem; }
+
+/* ── SECTION ── */
+.section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeUp .5s ease both;
+}
+.section-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .75rem;
+  cursor: pointer; user-select: none;
+}
+.section-header:hover { background: rgba(255,255,255,.02); }
+.section-icon {
+  width: 32px; height: 32px; border-radius: 6px;
+  display: grid; place-items: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.section-title {
+  font-family: var(--sans); font-weight: 700;
+  font-size: .95rem; flex: 1;
+}
+.section-badge {
+  font-family: var(--mono); font-size: .65rem;
+  padding: .2rem .5rem; border-radius: 3px;
+  flex-shrink: 0;
+}
+.chevron {
+  color: var(--muted); font-size: .8rem;
+  transition: transform .3s;
+  flex-shrink: 0;
+}
+.section.collapsed .chevron { transform: rotate(-90deg); }
+.section-body { padding: 0; }
+.section.collapsed .section-body { display: none; }
+
+/* ── QA ITEMS ── */
+.qa-item {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+}
+.qa-item:last-child { border-bottom: none; }
+
+.q-row {
+  display: flex; align-items: flex-start; gap: .75rem;
+  margin-bottom: .75rem;
+  cursor: pointer;
+}
+.q-num {
+  font-family: var(--mono); font-size: .7rem;
+  color: var(--bg); font-weight: 700;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: .15rem .4rem;
+  flex-shrink: 0; margin-top: .15rem;
+  min-width: 28px; text-align: center;
+}
+.q-text {
+  font-weight: 600; font-size: .92rem;
+  flex: 1; line-height: 1.5;
+}
+.marks-badge {
+  font-family: var(--mono); font-size: .65rem;
+  color: var(--yellow); border: 1px solid var(--yellow);
+  padding: .15rem .4rem; border-radius: 3px;
+  flex-shrink: 0; margin-top: .15rem;
+}
+.toggle-ans {
+  font-family: var(--mono); font-size: .65rem;
+  color: var(--accent2); border: 1px solid var(--accent2);
+  background: none; cursor: pointer; padding: .15rem .5rem;
+  border-radius: 3px; flex-shrink: 0; margin-top: .15rem;
+  transition: all .15s;
+}
+.toggle-ans:hover { background: var(--accent2); color: #fff; }
+
+.answer {
+  background: rgba(0,0,0,.3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-size: .88rem;
+  line-height: 1.8;
+}
+.answer.hidden { display: none; }
+
+.answer h4 {
+  font-family: var(--mono); font-size: .75rem;
+  color: var(--accent); text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: .5rem;
+}
+.answer p { margin-bottom: .6rem; color: var(--text); }
+.answer p:last-child { margin-bottom: 0; }
+.answer ul, .answer ol {
+  padding-left: 1.5rem; margin-bottom: .6rem;
+}
+.answer li { margin-bottom: .25rem; }
+
+/* ── CODE / MONO BLOCKS ── */
+.code-block {
+  background: #0d1017;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  font-family: var(--mono); font-size: .78rem;
+  color: #a8d8a8;
+  overflow-x: auto;
+  margin: .5rem 0;
+  white-space: pre;
+  line-height: 1.6;
+}
+
+/* ── TABLE ── */
+.ans-table {
+  width: 100%; border-collapse: collapse;
+  margin: .75rem 0; font-size: .82rem;
+  font-family: var(--mono);
+}
+.ans-table th {
+  background: rgba(0,229,255,.08);
+  color: var(--accent);
+  padding: .4rem .75rem;
+  text-align: left; border: 1px solid var(--border);
+  font-size: .72rem; letter-spacing: .05em;
+}
+.ans-table td {
+  padding: .4rem .75rem;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.ans-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+.ans-table .total td { color: var(--yellow); font-weight: 700; }
+
+/* ── GANTT CHART ── */
+.gantt {
+  display: flex; align-items: stretch;
+  margin: .75rem 0; overflow-x: auto;
+}
+.gantt-block {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 40px;
+}
+.gantt-cell {
+  border: 1px solid var(--border);
+  padding: .35rem .5rem;
+  font-family: var(--mono); font-size: .72rem;
+  font-weight: 700; text-align: center;
+  border-right: none; min-width: 40px;
+}
+.gantt-block:last-child .gantt-cell { border-right: 1px solid var(--border); }
+.gantt-time {
+  font-family: var(--mono); font-size: .65rem;
+  color: var(--muted); margin-top: .2rem; width: 100%;
+  text-align: left; padding-left: 2px;
+}
+.p1 { background: rgba(0,229,255,.15); color: var(--accent); }
+.p2 { background: rgba(124,77,255,.15); color: var(--accent2); }
+.p3 { background: rgba(255,107,53,.15); color: var(--accent3); }
+.p4 { background: rgba(0,230,118,.15); color: var(--green); }
+.p5 { background: rgba(255,215,64,.15); color: var(--yellow); }
+
+/* ── HIGHLIGHT ── */
+.hl { color: var(--accent); font-weight: 700; }
+.hl2 { color: var(--accent2); font-weight: 700; }
+.hl3 { color: var(--green); font-weight: 700; }
+.hl4 { color: var(--yellow); }
+
+/* ── SEARCH ── */
+.search-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 1.5rem 1.5rem;
+}
+.search-input {
+  width: 100%; background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: .75rem 1rem;
+  color: var(--text); font-family: var(--mono); font-size: .85rem;
+  outline: none; transition: border-color .2s;
+}
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus { border-color: var(--accent); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-family: var(--mono); font-size: .72rem;
+  color: var(--muted);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .toc {
+    position: static;
+    max-height: none;
+    display: none;
+  }
+  nav { display: none; }
+  .gantt-cell { min-width: 30px; font-size: .65rem; padding: .3rem .35rem; }
+}
+
+/* ── TAGS ── */
+.tag {
+  display: inline-block;
+  font-family: var(--mono); font-size: .63rem;
+  padding: .15rem .4rem; border-radius: 3px;
+  margin-right: .25rem; margin-bottom: .2rem;
+}
+.tag-part-a { background: rgba(0,229,255,.1); color: var(--accent); border: 1px solid rgba(0,229,255,.3); }
+.tag-part-b { background: rgba(124,77,255,.1); color: var(--accent2); border: 1px solid rgba(124,77,255,.3); }
+.tag-part-c { background: rgba(255,107,53,.1); color: var(--accent3); border: 1px solid rgba(255,107,53,.3); }
+.tag-part-d { background: rgba(0,230,118,.1); color: var(--green); border: 1px solid rgba(0,230,118,.3); }
+
+.sep { height: 1px; background: var(--border); margin: .75rem 0; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { 
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 2px; z-index: 200; background: transparent;
+}
+#progress-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width .1s;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div id="progress-bar"></div></div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">OS<span>/</span>LAB <span>·</span> PCCSL407</div>
+    <nav>
+      <a href="#viva-set1">Set 1</a>
+      <a href="#viva-set2">Set 2</a>
+      <a href="#internal">Internal</a>
+      <a href="#univ-set1">Univ Q1</a>
+      <a href="#univ-set2">Univ Q2</a>
+      <a href="#set3">Set 3</a>
+      <a href="#set4">Set 4</a>
+      <a href="#set5">Set 5</a>
+      <a href="#set6">Set 6</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-badge">Live Exam Prep Guide</div>
+  <h1>Operating Systems<br><span class="accent">Lab Exam</span> <span class="accent2">Answers</span></h1>
+  <p class="hero-sub">Complete viva questions with detailed answers — all 6 question sets, scheduling algorithms, deadlock, IPC, paging and more.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-val">6</span><span class="stat-lbl">Question Sets</span></div>
+    <div class="stat"><span class="stat-val">80+</span><span class="stat-lbl">Viva Questions</span></div>
+    <div class="stat"><span class="stat-val">100</span><span class="stat-lbl">Total Marks</span></div>
+    <div class="stat"><span class="stat-val">7</span><span class="stat-lbl">Impl. Programs</span></div>
+  </div>
+</section>
+
+<div class="search-wrap">
+  <input class="search-input" type="text" id="searchBox" placeholder="🔍  Search questions… (e.g. deadlock, semaphore, fork)"/>
+</div>
+
+<div class="main-grid">
+  <!-- SIDEBAR -->
+  <aside class="toc">
+    <div class="toc-title">Contents</div>
+    <ul>
+      <div class="toc-group">
+        <div class="toc-group-title">Viva Sets</div>
+        <li><a href="#viva-set1">Set 1 – Short &amp; Concept</a></li>
+        <li><a href="#viva-set2">Set 2 – OS Concepts</a></li>
+        <li><a href="#internal">Internal Exam Viva</a></li>
+      </div>
+      <div class="toc-group">
+        <div class="toc-group-title">University Questions</div>
+        <li><a href="#univ-set1">Set 1 – Matrix Threads</a></li>
+        <li><a href="#univ-set2">Set 2 – Disk Scheduling</a></li>
+        <li><a href="#set3">Set 3 – Dining &amp; SJF</a></li>
+        <li><a href="#set4">Set 4 – Paging</a></li>
+        <li><a href="#set5">Set 5 – Readers-Writers</a></li>
+        <li><a href="#set6">Set 6 – FIFO/LRU Paging</a></li>
+      </div>
+      <div class="toc-group">
+        <div class="toc-group-title">Implementation</div>
+        <li><a href="#impl">All Programs List</a></li>
+      </div>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- ============================
+         VIVA SET 1
+    ============================= -->
+    <div class="section" id="viva-set1">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(0,229,255,.1)">📋</div>
+        <div class="section-title">Viva Question Set – 1 (30 Marks)</div>
+        <span class="section-badge" style="background:rgba(0,229,255,.1);color:var(--accent)">Part A–D</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">1</span>
+            <span class="q-text">What is the purpose of the Linux /proc file system?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>The <span class="hl">/proc</span> file system is a <strong>virtual (pseudo) file system</strong> in Linux that provides a window into the kernel's internal data structures. It does not store real files on disk — it exists only in memory.</p>
+            <p><strong>Key uses:</strong></p>
+            <ul>
+              <li><span class="hl">/proc/cpuinfo</span> – CPU details (cores, model, speed)</li>
+              <li><span class="hl">/proc/meminfo</span> – Memory usage (total, free, available)</li>
+              <li><span class="hl">/proc/[PID]/status</span> – Info about a specific process</li>
+              <li><span class="hl">/proc/stat</span> – System-wide statistics (context switches, processes)</li>
+              <li>Track number of processes, context switches, running/blocked states</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">2</span>
+            <span class="q-text">What information does the ps command display?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>The <span class="hl">ps</span> (Process Status) command shows a snapshot of currently running processes. It displays:</p>
+            <ul>
+              <li><strong>PID</strong> – Process ID</li>
+              <li><strong>TTY</strong> – Terminal associated with the process</li>
+              <li><strong>TIME</strong> – CPU time consumed</li>
+              <li><strong>CMD</strong> – Command name/path</li>
+              <li>With <code>ps aux</code>: user, CPU%, MEM%, start time, status</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">3</span>
+            <span class="q-text">What is the difference between user mode and kernel mode?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>User Mode</th><th>Kernel Mode</th></tr>
+              <tr><td>Restricted access to hardware</td><td>Full access to hardware and all resources</td></tr>
+              <tr><td>Normal application execution</td><td>OS kernel, device drivers execution</td></tr>
+              <tr><td>Cannot execute privileged instructions</td><td>Can execute all CPU instructions</td></tr>
+              <tr><td>Crash only affects the process</td><td>Crash can crash the whole system</td></tr>
+              <tr><td>Mode bit = 1</td><td>Mode bit = 0</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">4</span>
+            <span class="q-text">Process API?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>The <span class="hl">Process API</span> in Linux consists of system calls to create and manage processes:</p>
+            <ul>
+              <li><span class="hl">fork()</span> – Creates a child process (clone of parent)</li>
+              <li><span class="hl">exec()</span> / <span class="hl">execvp()</span> – Replaces process image with a new program</li>
+              <li><span class="hl">wait()</span> / <span class="hl">waitpid()</span> – Parent waits for child to finish</li>
+              <li><span class="hl">exit()</span> – Terminates a process</li>
+              <li><span class="hl">getpid()</span> – Returns PID of current process</li>
+              <li><span class="hl">getppid()</span> – Returns parent's PID</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">5</span>
+            <span class="q-text">What does the fork() system call do?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p><span class="hl">fork()</span> creates a new (child) process that is an exact copy of the calling (parent) process. Both processes continue execution from the next line after fork().</p>
+            <p><strong>Return values:</strong></p>
+            <ul>
+              <li>Returns <span class="hl3">0</span> in the child process</li>
+              <li>Returns <span class="hl">child's PID</span> in the parent process</li>
+              <li>Returns <span class="hl4">-1</span> on error</li>
+            </ul>
+            <div class="code-block">pid_t pid = fork();
+if (pid == 0)      { /* child code */ }
+else if (pid > 0)  { /* parent code */ }
+else               { /* fork failed */ }</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">6</span>
+            <span class="q-text">What is the difference between fork() and execvp()?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>fork()</th><th>execvp()</th></tr>
+              <tr><td>Creates a new child process</td><td>Replaces current process image</td></tr>
+              <tr><td>Both parent and child continue</td><td>Old code is completely replaced</td></tr>
+              <tr><td>Returns PID / 0</td><td>Does NOT return if successful</td></tr>
+              <tr><td>Memory is duplicated (copy-on-write)</td><td>New program is loaded into memory</td></tr>
+              <tr><td>Used to create a new process</td><td>Used to run a different program</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">7</span>
+            <span class="q-text">What is the role of the wait() system call?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p><span class="hl">wait()</span> suspends the parent process until one of its child processes terminates. It:</p>
+            <ul>
+              <li>Prevents <strong>zombie processes</strong> (processes that have finished but not been cleaned up)</li>
+              <li>Allows the parent to retrieve the child's exit status</li>
+              <li>Ensures proper synchronization between parent and child</li>
+            </ul>
+            <div class="code-block">int status;
+pid_t child_pid = wait(&status);</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">8</span>
+            <span class="q-text">Need for IPC?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p><span class="hl">IPC (Inter-Process Communication)</span> is needed because:</p>
+            <ul>
+              <li>Processes have separate address spaces and cannot directly access each other's memory</li>
+              <li>Enables <strong>data sharing</strong> between cooperating processes</li>
+              <li>Allows <strong>synchronization</strong> and coordination</li>
+              <li>Supports modular program design (separate processes for separate tasks)</li>
+              <li>Examples: web server ↔ database, producer ↔ consumer</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">9</span>
+            <span class="q-text">What is a pipe in Inter-Process Communication?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>A <span class="hl">pipe</span> is a unidirectional communication channel between related processes (parent-child). Data flows in one direction only.</p>
+            <ul>
+              <li>Created using <code>pipe(fd[2])</code> — fd[0]=read end, fd[1]=write end</li>
+              <li><strong>Anonymous pipe</strong>: only between related processes</li>
+              <li><strong>Named pipe (FIFO)</strong>: can be used by unrelated processes</li>
+              <li>Operates like a FIFO queue in kernel memory</li>
+              <li>Blocking: read blocks if empty, write blocks if full</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">10</span>
+            <span class="q-text">What is shared memory in IPC?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p><span class="hl">Shared Memory</span> is the fastest IPC mechanism. A region of memory is mapped into the address space of multiple processes, allowing them to read/write directly.</p>
+            <p><strong>Key functions (POSIX):</strong></p>
+            <ul>
+              <li><code>shmget()</code> – Create/get a shared memory segment</li>
+              <li><code>shmat()</code> – Attach segment to process address space</li>
+              <li><code>shmdt()</code> – Detach segment</li>
+              <li><code>shmctl()</code> – Control/remove the segment</li>
+            </ul>
+            <p><strong>Requires</strong> external synchronization (semaphores) to prevent race conditions.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">11</span>
+            <span class="q-text">What is the purpose of message queues?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>A <span class="hl">Message Queue</span> is a linked list of messages stored in the kernel, allowing processes to send and receive typed messages asynchronously.</p>
+            <ul>
+              <li><code>msgget()</code> – Create/access queue</li>
+              <li><code>msgsnd()</code> – Send a message</li>
+              <li><code>msgrcv()</code> – Receive a message (can filter by type)</li>
+              <li><code>msgctl()</code> – Control/remove queue</li>
+            </ul>
+            <p>Unlike pipes, messages have <strong>type/priority</strong>, and receiver can pick specific types.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">12</span>
+            <span class="q-text">What is a thread? How is it different from a process?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Thread</th><th>Process</th></tr>
+              <tr><td>Lightweight unit of execution</td><td>Heavyweight unit of execution</td></tr>
+              <tr><td>Shares memory with other threads in same process</td><td>Has its own address space</td></tr>
+              <tr><td>Fast to create/switch</td><td>Slow to create (fork)/switch</td></tr>
+              <tr><td>Shares code, data, open files</td><td>Copy of parent's resources</td></tr>
+              <tr><td>Created via pthread_create()</td><td>Created via fork()</td></tr>
+              <tr><td>Crash can affect all threads</td><td>Crash isolated to that process</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">13</span>
+            <span class="q-text">What is virtual memory?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p><span class="hl">Virtual Memory</span> is a memory management technique that gives each process the illusion of having a large, contiguous address space, even if physical RAM is limited.</p>
+            <ul>
+              <li>Allows programs larger than physical RAM to run</li>
+              <li>Uses disk (swap space) as extension of RAM</li>
+              <li>Provides isolation between processes</li>
+              <li>Enables efficient memory sharing</li>
+              <li>Implemented via paging or segmentation with page tables and MMU</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">14</span>
+            <span class="q-text">Need for address translation from logical to physical address?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>Programs use <span class="hl">logical (virtual) addresses</span> which must be converted to <span class="hl">physical addresses</span> because:</p>
+            <ul>
+              <li>Each process thinks it has its own address space starting at 0</li>
+              <li>Multiple processes can't all physically start at address 0</li>
+              <li>OS needs to protect processes from accessing each other's memory</li>
+              <li>Physical placement of a process may change (due to swapping)</li>
+              <li>Allows relocation, sharing, and protection</li>
+            </ul>
+            <p>Done by the <strong>MMU (Memory Management Unit)</strong> in hardware.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">15</span>
+            <span class="q-text">Different address translation schemes?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">Base and Limit Registers</span> – Simple; physical addr = logical + base</li>
+              <li><span class="hl">Paging</span> – Divides memory into fixed-size pages; uses page table</li>
+              <li><span class="hl">Segmentation</span> – Divides into variable-size segments; uses segment table</li>
+              <li><span class="hl">Hybrid (Paged Segmentation)</span> – Each segment is paged; used in x86</li>
+              <li><span class="hl">Inverted Page Table</span> – One entry per physical frame (saves memory)</li>
+              <li><span class="hl">TLB (Translation Lookaside Buffer)</span> – Cache for fast page table lookups</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">16</span>
+            <span class="q-text">Need for Virtual File System (VFS)?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>The <span class="hl">VFS (Virtual File System)</span> provides a common interface layer between user applications and different underlying file systems (ext4, NTFS, FAT32, etc.).</p>
+            <ul>
+              <li>Allows applications to use the same system calls (<code>open</code>, <code>read</code>, <code>write</code>) regardless of the actual file system</li>
+              <li>Supports multiple file systems mounted simultaneously</li>
+              <li>Abstraction layer → portability and flexibility</li>
+              <li>Enables accessing network file systems (NFS) transparently</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B1</span>
+            <span class="q-text">Explain how you can find CPU cores and memory details using /proc.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>CPU Cores</h4>
+            <div class="code-block">cat /proc/cpuinfo | grep "processor" | wc -l   # number of logical CPUs
+cat /proc/cpuinfo | grep "cpu cores" | head -1  # cores per socket
+cat /proc/cpuinfo | grep "model name" | head -1 # CPU model</div>
+            <h4>Memory Details</h4>
+            <div class="code-block">cat /proc/meminfo
+# MemTotal:       8GB total RAM
+# MemFree:        available free RAM
+# MemAvailable:   estimable available without swapping
+# SwapTotal/Free: swap space info</div>
+            <p>In C code, open <code>/proc/cpuinfo</code> and count "processor" entries, or parse <code>/proc/meminfo</code> for MemTotal/MemFree lines.</p>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B2</span>
+            <span class="q-text">Describe the process tree and how pstree helps visualize it.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>A <span class="hl">process tree</span> represents the parent-child relationship between processes. All processes are descendants of <strong>init (PID 1)</strong> or <strong>systemd</strong>.</p>
+            <div class="code-block">init(1)
+├── systemd
+│   ├── sshd(1234)
+│   │   └── bash(5678)
+│   └── apache(2345)
+└── kernel_threads</div>
+            <p><span class="hl">pstree</span> command displays this hierarchy as a tree. Useful flags:</p>
+            <ul>
+              <li><code>pstree -p</code> – Show PIDs</li>
+              <li><code>pstree -u</code> – Show usernames</li>
+              <li><code>pstree -h</code> – Highlight current process and its ancestors</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B3</span>
+            <span class="q-text">Explain the steps involved in process creation using fork().</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ol>
+              <li>Parent calls <span class="hl">fork()</span> system call</li>
+              <li>OS allocates a new PCB (Process Control Block) for child</li>
+              <li>Child gets a unique PID; PPID set to parent's PID</li>
+              <li>Parent's address space is <strong>copied</strong> to child (copy-on-write)</li>
+              <li>File descriptors are duplicated</li>
+              <li>Scheduling queues updated; both processes become runnable</li>
+              <li>fork() returns 0 to child, child-PID to parent</li>
+              <li>Both continue execution independently from the next instruction</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B4</span>
+            <span class="q-text">Explain how pipes work in Linux IPC.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">int fd[2];
+pipe(fd);         // fd[0]=read, fd[1]=write
+if (fork() == 0) {
+  close(fd[1]);   // child reads
+  read(fd[0], buf, sizeof(buf));
+} else {
+  close(fd[0]);   // parent writes
+  write(fd[1], "Hello", 5);
+}</div>
+            <p>Pipes use a kernel buffer. When write end is closed, read returns EOF. Data flows: <strong>Writer → kernel buffer → Reader</strong>. Pipes are FIFO and unidirectional.</p>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B5</span>
+            <span class="q-text">What is context switching? Why does it occur?</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Answer</h4>
+            <p>A <span class="hl">context switch</span> is the process of saving the state (context) of a currently running process and loading the saved state of another process so it can run.</p>
+            <p><strong>Steps:</strong></p>
+            <ol>
+              <li>Save CPU registers, PC, stack pointer of current process to its PCB</li>
+              <li>Update process state to ready/waiting</li>
+              <li>Select next process via scheduler</li>
+              <li>Load PCB of new process (registers, PC, stack)</li>
+              <li>Resume execution of new process</li>
+            </ol>
+            <p><strong>Occurs due to:</strong> time quantum expiry, I/O wait, higher-priority process arrival, system calls, interrupts.</p>
+            <p>Context switching is <strong>pure overhead</strong> — no useful work is done during a switch.</p>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B6</span>
+            <span class="q-text">Explain the difference between preemptive and non-preemptive scheduling.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Preemptive</th><th>Non-Preemptive</th></tr>
+              <tr><td>CPU can be taken from running process</td><td>Process holds CPU until it finishes or blocks</td></tr>
+              <tr><td>Better response time for high-priority tasks</td><td>Simpler to implement</td></tr>
+              <tr><td>More context switches → more overhead</td><td>Fewer context switches</td></tr>
+              <tr><td>Examples: Round Robin, SRTF, Preemptive Priority</td><td>Examples: FCFS, Non-Preemptive SJF</td></tr>
+              <tr><td>Used in time-sharing systems</td><td>Used in batch systems</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Part C -->
+        <div class="qa-item" style="background:rgba(255,107,53,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent3)">C1</span>
+            <span class="q-text">Explain Round Robin CPU scheduling with an example. (TQ=2, P1:AT=0,BT=5 | P2:AT=1,BT=4 | P3:AT=2,BT=3)</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Round Robin – Each process gets a fixed time quantum (TQ=2ms)</h4>
+            <p><strong>Gantt Chart:</strong></p>
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">2</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">4</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">6</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">8</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">10</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">11</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="background:transparent;min-width:20px"></div><div class="gantt-time">12</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>AT</th><th>BT</th><th>CT</th><th>TAT</th><th>WT</th></tr>
+              <tr><td>P1</td><td>0</td><td>5</td><td>12</td><td>12</td><td>7</td></tr>
+              <tr><td>P2</td><td>1</td><td>4</td><td>10</td><td>9</td><td>5</td></tr>
+              <tr><td>P3</td><td>2</td><td>3</td><td>11</td><td>9</td><td>6</td></tr>
+              <tr class="total"><td colspan="4">Averages</td><td>10 ms</td><td>6 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(255,107,53,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent3)">C2</span>
+            <span class="q-text">Explain the Readers–Writers problem and how semaphores solve it.</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Problem</h4>
+            <p>Multiple readers can read simultaneously, but a writer must have exclusive access. Problems: <strong>starvation</strong> of writers (reader priority) or readers (writer priority).</p>
+            <h4>Reader Priority Solution (Semaphore-based)</h4>
+            <div class="code-block">semaphore mutex = 1;   // protects readcount
+semaphore wrt = 1;     // mutual exclusion for writers
+int readcount = 0;
+
+// READER
+wait(mutex);
+readcount++;
+if (readcount == 1) wait(wrt);  // first reader blocks writers
+signal(mutex);
+/* READ DATA */
+wait(mutex);
+readcount--;
+if (readcount == 0) signal(wrt); // last reader unblocks writers
+signal(mutex);
+
+// WRITER
+wait(wrt);
+/* WRITE DATA */
+signal(wrt);</div>
+          </div>
+        </div>
+
+        <!-- Part D -->
+        <div class="qa-item" style="background:rgba(0,230,118,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--green);color:#000">D1</span>
+            <span class="q-text">Explain the Banker's Algorithm and how it determines a safe sequence.</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Banker's Algorithm – Deadlock Avoidance</h4>
+            <p>Data structures: <strong>Available[]</strong>, <strong>Max[][]</strong>, <strong>Allocation[][]</strong>, <strong>Need[][] = Max – Allocation</strong></p>
+            <h4>Safety Algorithm:</h4>
+            <ol>
+              <li>Work = Available; Finish[i] = false for all i</li>
+              <li>Find process i where Finish[i]==false AND Need[i] ≤ Work</li>
+              <li>Work = Work + Allocation[i]; Finish[i] = true</li>
+              <li>Repeat step 2; if all Finish[i]==true → <span class="hl3">SAFE STATE</span></li>
+            </ol>
+            <h4>Resource Request Algorithm:</h4>
+            <p>When process Pi requests resources: if Request ≤ Need AND Request ≤ Available → tentatively allocate → run safety check → if safe, grant; else rollback.</p>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(0,230,118,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--green);color:#000">D2</span>
+            <span class="q-text">What is deadlock detection and how does it differ from deadlock avoidance?</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Deadlock Detection</th><th>Deadlock Avoidance</th></tr>
+              <tr><td>Allows deadlock to occur, then detects it</td><td>Prevents deadlock before it happens</td></tr>
+              <tr><td>Uses resource allocation graph or detection algorithm</td><td>Uses Banker's algorithm</td></tr>
+              <tr><td>Requires recovery (kill process, preempt resources)</td><td>No recovery needed</td></tr>
+              <tr><td>Less overhead during normal operation</td><td>More overhead (safety check on every request)</td></tr>
+              <tr><td>Needs max resource info? No</td><td>Needs max resource info? Yes</td></tr>
+            </table>
+            <h4>Detection Algorithm Steps:</h4>
+            <ol>
+              <li>Work = Available; Finish[i] = (Allocation[i]==0)</li>
+              <li>Find i where Finish[i]==false AND Request[i] ≤ Work</li>
+              <li>Work += Allocation[i]; Finish[i] = true</li>
+              <li>If any Finish[i]==false → those processes are <span class="hl4">DEADLOCKED</span></li>
+            </ol>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         VIVA SET 2
+    ============================= -->
+    <div class="section" id="viva-set2">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(124,77,255,.1)">🔬</div>
+        <div class="section-title">Viva Question Set – 2 (30 Marks)</div>
+        <span class="section-badge" style="background:rgba(124,77,255,.1);color:var(--accent2)">Part A–E</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">1</span>
+            <span class="q-text">What is the purpose of the top command in Linux?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">top</span> is a dynamic real-time process viewer. It shows:</p>
+            <ul>
+              <li>Running processes sorted by CPU/memory usage</li>
+              <li>System uptime, load average</li>
+              <li>Total tasks: running, sleeping, stopped, zombie</li>
+              <li>CPU usage breakdown (user%, kernel%, idle%)</li>
+              <li>Memory and swap usage</li>
+              <li>Useful keys: <code>k</code>=kill, <code>r</code>=renice, <code>q</code>=quit, <code>P</code>=sort by CPU</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">2</span>
+            <span class="q-text">What does the gdb debugger do?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">gdb (GNU Debugger)</span> is a powerful debugging tool for C/C++ programs. It allows you to:</p>
+            <ul>
+              <li>Run a program step-by-step (<code>step</code>, <code>next</code>)</li>
+              <li>Set breakpoints (<code>break main</code>)</li>
+              <li>Inspect variables (<code>print var</code>)</li>
+              <li>View stack trace (<code>backtrace</code>)</li>
+              <li>Analyze core dumps from crashed programs</li>
+              <li>Examine memory contents</li>
+            </ul>
+            <div class="code-block">gcc -g program.c -o program
+gdb ./program</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">3</span>
+            <span class="q-text">What information does the file command provide?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">file</span> determines the type of a file by examining its content (magic bytes), not the extension. Examples:</p>
+            <div class="code-block">$ file program
+program: ELF 64-bit LSB executable, x86-64, dynamically linked
+$ file script.sh
+script.sh: Bourne-Again shell script, ASCII text executable
+$ file image.png
+image.png: PNG image data, 800 x 600, 8-bit/color</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">4</span>
+            <span class="q-text">What is the role of the time command?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">time</span> measures how long a command takes to execute. It reports:</p>
+            <ul>
+              <li><strong>real</strong> – Wall clock time (actual elapsed time)</li>
+              <li><strong>user</strong> – Time spent in user-mode code</li>
+              <li><strong>sys</strong> – Time spent in kernel-mode (system calls)</li>
+            </ul>
+            <div class="code-block">$ time ./myprogram
+real    0m1.234s
+user    0m0.890s
+sys     0m0.120s</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">5</span>
+            <span class="q-text">What is the purpose of the fuser command?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">fuser</span> identifies which processes are using a file or socket. Useful for:</p>
+            <ul>
+              <li>Finding which process is using a port: <code>fuser 80/tcp</code></li>
+              <li>Finding which process is using a file: <code>fuser /path/to/file</code></li>
+              <li>Killing processes using a resource: <code>fuser -k 80/tcp</code></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">7</span>
+            <span class="q-text">What is a semaphore?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>A <span class="hl">semaphore</span> is an integer variable used for synchronization between processes/threads, accessed only through two atomic operations:</p>
+            <ul>
+              <li><span class="hl">wait(S)</span> / P(S): <code>while(S≤0); S--;</code> — blocks if S=0</li>
+              <li><span class="hl">signal(S)</span> / V(S): <code>S++;</code> — wakes a blocked process</li>
+            </ul>
+            <p>Used to control access to shared resources and prevent race conditions.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">8</span>
+            <span class="q-text">What is the difference between binary semaphore and counting semaphore?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Binary Semaphore</th><th>Counting Semaphore</th></tr>
+              <tr><td>Value: only 0 or 1</td><td>Value: any non-negative integer</td></tr>
+              <tr><td>Like a mutex (lock/unlock)</td><td>Controls access to a pool of N resources</td></tr>
+              <tr><td>Used for mutual exclusion</td><td>Used to track available resources</td></tr>
+              <tr><td>Only one process in critical section</td><td>Up to N processes concurrently</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">9</span>
+            <span class="q-text">What is thrashing in memory management?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><span class="hl">Thrashing</span> occurs when a process spends more time paging (swapping pages in/out) than executing. Cause: too many processes, insufficient frames allocated.</p>
+            <p><strong>Symptoms:</strong> CPU utilization drops sharply; paging device is constantly busy.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+              <li>Working Set Model – allocate frames based on locality</li>
+              <li>Page Fault Frequency – add/remove frames based on fault rate</li>
+              <li>Reduce degree of multiprogramming</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">10</span>
+            <span class="q-text">What is a page fault?</span>
+            <span class="marks-badge">1-2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>A <span class="hl">page fault</span> occurs when a process accesses a page that is not currently in physical memory (RAM). The OS must:</p>
+            <ol>
+              <li>Trap to OS (page fault interrupt)</li>
+              <li>Find the page on disk (swap space)</li>
+              <li>Find a free frame (evict if needed using replacement algorithm)</li>
+              <li>Load the page into the frame</li>
+              <li>Update page table</li>
+              <li>Resume the process</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B1</span>
+            <span class="q-text">Describe the three IPC methods: Pipe, Message Queue, and Shared Memory.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Feature</th><th>Pipe</th><th>Message Queue</th><th>Shared Memory</th></tr>
+              <tr><td>Speed</td><td>Medium</td><td>Medium</td><td>Fastest</td></tr>
+              <tr><td>Direction</td><td>Unidirectional</td><td>Bidirectional</td><td>Bidirectional</td></tr>
+              <tr><td>Data format</td><td>Byte stream</td><td>Typed messages</td><td>Raw bytes</td></tr>
+              <tr><td>Sync needed?</td><td>Built-in</td><td>Built-in</td><td>Manual (semaphores)</td></tr>
+              <tr><td>Relationship</td><td>Related processes</td><td>Any processes</td><td>Any processes</td></tr>
+              <tr><td>Key calls</td><td>pipe(), read(), write()</td><td>msgget(), msgsnd(), msgrcv()</td><td>shmget(), shmat(), shmdt()</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(124,77,255,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent2)">B2</span>
+            <span class="q-text">Explain the Dining Philosophers Problem.</span>
+            <span class="marks-badge">3-4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Setup</h4>
+            <p>5 philosophers sit around a circular table. Between each pair is 1 chopstick (5 total). To eat, a philosopher needs <strong>both</strong> adjacent chopsticks. After eating, they think, then try to eat again.</p>
+            <h4>Problem</h4>
+            <p>If all philosophers simultaneously pick up their left chopstick → <span class="hl4">deadlock</span> (everyone waits for right chopstick forever).</p>
+            <h4>Solutions</h4>
+            <ul>
+              <li>Allow only 4 philosophers to sit at once</li>
+              <li><span class="hl3">Reversed order for last philosopher</span> (pick right first) — breaks circular wait</li>
+              <li>Use a waiter (monitor) — only give both chopsticks together</li>
+              <li>Semaphore-based: state machine (THINKING/HUNGRY/EATING)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Part C -->
+        <div class="qa-item" style="background:rgba(255,107,53,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--accent3)">C1</span>
+            <span class="q-text">Compare FCFS, SRTF, Priority Scheduling, and Round Robin.</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Algorithm</th><th>Type</th><th>Selection Criteria</th><th>Starvation?</th><th>Overhead</th></tr>
+              <tr><td>FCFS</td><td>Non-preemptive</td><td>Arrival order</td><td>No</td><td>Very low</td></tr>
+              <tr><td>SRTF</td><td>Preemptive</td><td>Shortest remaining time</td><td>Yes (long jobs)</td><td>High</td></tr>
+              <tr><td>Priority</td><td>Both variants</td><td>Priority number</td><td>Yes (low priority)</td><td>Medium</td></tr>
+              <tr><td>Round Robin</td><td>Preemptive</td><td>FCFS + time quantum</td><td>No</td><td>Medium</td></tr>
+            </table>
+            <p><strong>Best average waiting time:</strong> <span class="hl">SRTF/SJF</span> (provably optimal for average waiting time).</p>
+          </div>
+        </div>
+
+        <!-- Part D/E -->
+        <div class="qa-item" style="background:rgba(0,230,118,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--green);color:#000">D1</span>
+            <span class="q-text">What are the four necessary conditions of deadlock?</span>
+            <span class="marks-badge">4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>Deadlock occurs if and only if <strong>all four conditions hold simultaneously (Coffman conditions):</strong></p>
+            <ol>
+              <li><span class="hl">Mutual Exclusion</span> – At least one resource must be held in a non-shareable mode</li>
+              <li><span class="hl">Hold and Wait</span> – A process holding resources can request more without releasing what it has</li>
+              <li><span class="hl">No Preemption</span> – Resources cannot be forcibly taken; only voluntarily released</li>
+              <li><span class="hl">Circular Wait</span> – A set of processes {P1,P2,...,Pn} where P1 waits for P2, P2 waits for P3, ..., Pn waits for P1</li>
+            </ol>
+            <p><strong>Prevention:</strong> Eliminate any one of the four conditions.</p>
+          </div>
+        </div>
+
+        <div class="qa-item" style="background:rgba(255,215,64,.03)">
+          <div class="q-row">
+            <span class="q-num" style="background:var(--yellow);color:#000">E1</span>
+            <span class="q-text">Compare FIFO, LRU, and Optimal page replacement algorithms.</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Algorithm</th><th>Evicts</th><th>Page Faults</th><th>Implementable?</th></tr>
+              <tr><td>FIFO</td><td>Oldest loaded page</td><td>Highest (Belady's anomaly possible)</td><td>Yes (queue)</td></tr>
+              <tr><td>LRU</td><td>Least recently used page</td><td>Better than FIFO</td><td>Yes (costly in HW)</td></tr>
+              <tr><td>Optimal (OPT)</td><td>Page not used longest in future</td><td>Minimum possible</td><td>No (needs future knowledge)</td></tr>
+            </table>
+            <p><strong>Belady's Anomaly:</strong> With FIFO, more frames can cause MORE page faults. LRU and OPT do not suffer from this.</p>
+            <p>OPT is used as a <strong>benchmark</strong> to evaluate other algorithms.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         INTERNAL EXAM VIVA
+    ============================= -->
+    <div class="section" id="internal">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(255,107,53,.1)">📝</div>
+        <div class="section-title">OS Lab Internal Exam – Viva (30 Marks)</div>
+        <span class="section-badge" style="background:rgba(255,107,53,.1);color:var(--accent3)">Internal</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">1</span>
+            <span class="q-text">What is the use of /proc? How to find CPU cores and memory? (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>/proc is a virtual filesystem in RAM that exposes kernel internal state. No data is stored on disk.</p>
+            <div class="code-block"># CPU Cores
+grep -c ^processor /proc/cpuinfo
+
+# Memory
+grep MemTotal /proc/meminfo
+grep MemFree /proc/meminfo</div>
+            <p>In C: <code>open("/proc/cpuinfo", O_RDONLY)</code>, parse lines starting with "processor".</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">2</span>
+            <span class="q-text">Describe the process tree and how the pstree command helps visualize it. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>All processes form a tree rooted at PID 1 (init/systemd). Each process has exactly one parent (except init). <span class="hl">pstree</span> displays this hierarchy graphically, showing which process created which others. Use <code>pstree -p</code> to see PIDs alongside names.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">3</span>
+            <span class="q-text">Purpose of top, gdb and time command? (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">top</span> – Real-time dynamic view of CPU/memory usage of all running processes</li>
+              <li><span class="hl">gdb</span> – GNU Debugger; set breakpoints, inspect variables, trace execution of C programs</li>
+              <li><span class="hl">time</span> – Reports real/user/sys execution time of any command</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">4</span>
+            <span class="q-text">Explain IPC mechanisms. Differentiate pipe and message queue using builtins. (5m)</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>IPC Mechanisms</h4>
+            <p>IPC allows data exchange between processes. Main mechanisms: Pipes, Message Queues, Shared Memory, Sockets, Signals.</p>
+            <table class="ans-table">
+              <tr><th>Feature</th><th>Pipe</th><th>Message Queue</th></tr>
+              <tr><td>Init</td><td><code>pipe(fd[2])</code></td><td><code>msgget(key, IPC_CREAT|0666)</code></td></tr>
+              <tr><td>Send</td><td><code>write(fd[1], buf, n)</code></td><td><code>msgsnd(msqid, &msg, size, 0)</code></td></tr>
+              <tr><td>Receive</td><td><code>read(fd[0], buf, n)</code></td><td><code>msgrcv(msqid, &msg, size, type, 0)</code></td></tr>
+              <tr><td>Message type</td><td>No (byte stream)</td><td>Yes (typed messages)</td></tr>
+              <tr><td>Persistence</td><td>No (disappears when closed)</td><td>Yes (persists until deleted)</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">5</span>
+            <span class="q-text">What are the four necessary conditions of deadlock? (4m)</span>
+            <span class="marks-badge">4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ol>
+              <li><span class="hl">Mutual Exclusion</span> – Resource held in non-shareable mode</li>
+              <li><span class="hl">Hold and Wait</span> – Holding resources while requesting more</li>
+              <li><span class="hl">No Preemption</span> – Resources released only voluntarily</li>
+              <li><span class="hl">Circular Wait</span> – Circular chain of waiting processes</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">6</span>
+            <span class="q-text">Explain the Deadlock Detection Algorithm with steps. (5m)</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Data structures needed:</h4>
+            <ul>
+              <li><strong>Available[]</strong> – Currently available resources</li>
+              <li><strong>Allocation[][]</strong> – Resources currently allocated to each process</li>
+              <li><strong>Request[][]</strong> – Current resource requests of each process</li>
+            </ul>
+            <h4>Algorithm Steps:</h4>
+            <ol>
+              <li>Let Work = Available; For all i: if Allocation[i]≠0 then Finish[i]=false, else Finish[i]=true</li>
+              <li>Find index i such that: Finish[i]==false AND Request[i] ≤ Work</li>
+              <li>If found: Work = Work + Allocation[i]; Finish[i] = true; goto step 2</li>
+              <li>If Finish[i]==false for some i → process Pi is <span class="hl4">DEADLOCKED</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">7</span>
+            <span class="q-text">Explain the Banker's Algorithm and how it determines a safe sequence. (5m)</span>
+            <span class="marks-badge">5m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>Already covered above in Set 1 D1. Key: Banker's is <strong>avoidance</strong> (prevents deadlock) while detection finds existing deadlock. Safety check: find a sequence where each process can finish using available + previously released resources.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">8</span>
+            <span class="q-text">Explain the need for page replacement and give one algorithm example. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><strong>Need:</strong> When a page fault occurs and physical memory is full, the OS must evict (replace) a page to make room. Choice of which page to evict affects performance.</p>
+            <h4>FIFO Page Replacement:</h4>
+            <p>Evict the page that was loaded <strong>first</strong> (oldest page). Implemented with a queue. Simple but suffers from Belady's Anomaly.</p>
+            <p>Example: Reference string: 1,2,3,4,1,2,5,1,2,3,4,5 with 3 frames → 9 page faults with FIFO.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         UNIVERSITY SET 1
+    ============================= -->
+    <div class="section" id="univ-set1">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(0,230,118,.1)">🎓</div>
+        <div class="section-title">University Exam – Question Set 1 (Matrix Threads + Viva)</div>
+        <span class="section-badge" style="background:rgba(0,230,118,.1);color:var(--green)">Univ Q1</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">Multithreaded Matrix Operations (Addition, Multiplication, Determinant)</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Logic Explained</h4>
+            <ul>
+              <li><strong>Thread 1</strong>: Matrix addition C[i][j] = A[i][j] + B[i][j]</li>
+              <li><strong>Thread 2</strong>: Matrix multiplication C[i][j] = Σ A[i][k] × B[k][j]</li>
+              <li><strong>Thread 3</strong>: Determinant of result matrix (cofactor expansion)</li>
+            </ul>
+            <h4>Sample Calculation (2×2):</h4>
+            <div class="code-block">A = [1 2; 3 4], B = [5 6; 7 8]
+A+B = [6 8; 10 12]
+A×B = [1×5+2×7  1×6+2×8] = [19 22]
+      [3×5+4×7  3×6+4×8]   [43 50]
+det(A×B) = 19×50 - 22×43 = 950 - 946 = 4</div>
+            <div class="code-block">#include &lt;pthread.h&gt;
+// Global matrices A, B, add_result, mul_result
+void* thread_add(void* arg)  { /* add A+B */ }
+void* thread_mul(void* arg)  { /* multiply A×B */ }
+void* thread_det(void* arg)  { /* compute det of mul_result */ }
+
+int main() {
+  pthread_t t1, t2, t3;
+  pthread_create(&t1, NULL, thread_add, NULL);
+  pthread_create(&t2, NULL, thread_mul, NULL);
+  pthread_join(t2, NULL);  // det needs mul result
+  pthread_create(&t3, NULL, thread_det, NULL);
+  pthread_join(t1, NULL); pthread_join(t3, NULL);
+}</div>
+          </div>
+        </div>
+
+        <!-- Viva Q1 Set 1 -->
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">What is the use of /proc file system? CPU cores and memory using /proc. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden"><p>See Set 1 Q1 and Internal Q1 above for full answer.</p></div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Linux programming commands: ps, strace (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">ps</span> – Shows snapshot of current processes (PID, TTY, TIME, CMD). <code>ps aux</code> shows all processes for all users.</li>
+              <li><span class="hl">strace</span> – Traces all system calls made by a program. Shows what kernel services a process uses (open, read, write, fork, etc.) and their arguments/return values. Useful for debugging.</li>
+            </ul>
+            <div class="code-block">strace ./myprogram 2>&1 | head -20</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">Define address translation in the paging scheme. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Paging Address Translation</h4>
+            <p>A virtual address is split into two parts:</p>
+            <ul>
+              <li><span class="hl">VPN (Virtual Page Number)</span> = Virtual Address ÷ Page Size</li>
+              <li><span class="hl">Offset</span> = Virtual Address mod Page Size</li>
+            </ul>
+            <p>The <strong>page table</strong> maps VPN → Frame Number (FN). Physical Address = FN × Page Size + Offset.</p>
+            <div class="code-block">VA = 2050, Page Size = 1KB = 1024
+VPN    = 2050 / 1024 = 2
+Offset = 2050 % 1024 = 2
+Page Table: VPN 2 → Frame 2
+PA = &lt;Frame 2, Offset 2&gt;</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V4</span>
+            <span class="q-text">Banker's Algorithm – Safety Checking. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden"><p>See Set 1 D1 for full Banker's Algorithm explanation. The safety algorithm checks if there exists a sequence of processes that can all complete given the currently available resources, releasing resources as they complete.</p></div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V5</span>
+            <span class="q-text">Describe how semaphores prevent race conditions. Semaphore operations. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>A <span class="hl">race condition</span> occurs when multiple processes/threads access shared data simultaneously and at least one modifies it, causing incorrect results.</p>
+            <p><strong>Semaphore prevents it via mutual exclusion:</strong></p>
+            <div class="code-block">semaphore mutex = 1;
+
+// In every process:
+wait(mutex);      // P operation: enter critical section
+/* Critical Section - access shared resource */
+signal(mutex);    // V operation: leave critical section</div>
+            <p><strong>Operations:</strong> <span class="hl">wait(S)</span>: atomically check and decrement (block if S=0). <span class="hl">signal(S)</span>: atomically increment S (wake blocked process if any).</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V6</span>
+            <span class="q-text">Round Robin Scheduling: TQ=2ms, P1(AT=0,BT=5), P2(AT=1,BT=4), P3(AT=2,BT=3) (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><strong>Gantt Chart:</strong></p>
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">2</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">4</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">6</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">8</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">10</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">11</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="min-width:10px;border:none"></div><div class="gantt-time">12</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>CT</th><th>TAT</th><th>WT</th></tr>
+              <tr><td>P1</td><td>12</td><td>12</td><td>7</td></tr>
+              <tr><td>P2</td><td>10</td><td>9</td><td>5</td></tr>
+              <tr><td>P3</td><td>11</td><td>9</td><td>6</td></tr>
+              <tr class="total"><td>Avg</td><td>–</td><td>10 ms</td><td>6 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         UNIVERSITY SET 2
+    ============================= -->
+    <div class="section" id="univ-set2">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(255,215,64,.1)">💿</div>
+        <div class="section-title">University Exam – Question Set 2 (Disk Scheduling)</div>
+        <span class="section-badge" style="background:rgba(255,215,64,.1);color:var(--yellow)">Univ Q2</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">SSTF and LOOK Disk Scheduling: requests=[98,183,41,122,14,124,65,67], head=53</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>SSTF (Shortest Seek Time First) – Total: 236</h4>
+            <p>Always service the request nearest to current head position.</p>
+            <div class="code-block">Head: 53 → 65(+12) → 67(+2) → 41(+26) → 14(+27)
+     → 98(+84) → 122(+24) → 124(+2) → 183(+59)
+Total = 12+2+26+27+84+24+2+59 = 236</div>
+            <h4>LOOK – Total: 299</h4>
+            <p>Like SCAN but reverses direction without going to disk ends. Goes to highest request, then sweeps back.</p>
+            <div class="code-block">Head: 53 → 65(+12) → 67(+2) → 98(+31) → 122(+24)
+     → 124(+2) → 183(+59) → 41(+142) → 14(+27)
+Total = 12+2+31+24+2+59+142+27 = 299
+
+Alternatively: (183–53) + (183–14) = 130+169 = 299</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">Linux programming commands: gdb, objdump (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">gdb</span> – GNU Debugger: breakpoints, step execution, variable inspection, backtrace</li>
+              <li><span class="hl">objdump</span> – Displays information about object files. Shows disassembly (<code>-d</code>), section headers (<code>-h</code>), symbols (<code>-t</code>). Useful for low-level debugging and understanding compiled code.</li>
+            </ul>
+            <div class="code-block">objdump -d program    # disassemble
+objdump -h program    # section headers</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Define address translation using segmentation. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>In <span class="hl">segmentation</span>, a virtual address has two parts: <strong>Segment Number (s)</strong> and <strong>Offset (d)</strong>.</p>
+            <p>The <strong>Segment Table</strong> has entries with: <em>Base</em> (physical start address) and <em>Limit</em> (length of segment).</p>
+            <p><strong>Translation:</strong> If offset d &lt; Limit[s] → Physical Address = Base[s] + d; else → Segment Fault (protection violation).</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">Round Robin: TQ=1ms, A(0,8), B(1,1), C(3,2), D(4,1), E(2,5). Find Avg WT. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">Gantt: |A|B|A|E|C|A|D|E|C|A|E|A|E|A|E|A|A|
+Time:   0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17</div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>AT</th><th>BT</th><th>CT</th><th>TAT</th><th>WT</th></tr>
+              <tr><td>A</td><td>0</td><td>8</td><td>17</td><td>17</td><td>9</td></tr>
+              <tr><td>B</td><td>1</td><td>1</td><td>2</td><td>1</td><td>0</td></tr>
+              <tr><td>C</td><td>3</td><td>2</td><td>9</td><td>6</td><td>4</td></tr>
+              <tr><td>D</td><td>4</td><td>1</td><td>7</td><td>3</td><td>2</td></tr>
+              <tr><td>E</td><td>2</td><td>5</td><td>15</td><td>13</td><td>8</td></tr>
+              <tr class="total"><td colspan="4">Averages</td><td>8 ms</td><td>4.6 ms</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================
+         SET 3
+    ============================= -->
+    <div class="section" id="set3">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(0,229,255,.1)">🍽️</div>
+        <div class="section-title">Question Set 3 – Dining Philosophers + Non-Preemptive SJF</div>
+        <span class="section-badge" style="background:rgba(0,229,255,.1);color:var(--accent)">Set 3</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">Dining Philosophers with reversed order for last philosopher</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>Key Idea to Break Circular Wait</h4>
+            <p>All philosophers (0–3) pick <strong>left chopstick first, then right</strong>. Philosopher 4 picks <strong>right first, then left</strong>. This breaks the circular dependency.</p>
+            <div class="code-block">// Chopstick semaphores
+sem_t chopstick[5]; // all initialized to 1
+
+void* philosopher(void* arg) {
+  int i = *(int*)arg;
+  while(1) {
+    // THINK
+    if (i == 4) {  // last philosopher: reverse order
+      sem_wait(&chopstick[(i+1)%5]); // right first
+      sem_wait(&chopstick[i]);        // then left
+    } else {
+      sem_wait(&chopstick[i]);        // left first
+      sem_wait(&chopstick[(i+1)%5]); // then right
+    }
+    // EAT
+    sem_post(&chopstick[i]);
+    sem_post(&chopstick[(i+1)%5]);
+  }
+}</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">/proc: Track processes forked since bootup and context switches. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block"># Processes forked since bootup
+grep "processes" /proc/stat
+# Output: processes 12345  ← total forks since boot
+
+# Context switches for a process (PID)
+grep "voluntary_ctxt_switches" /proc/[PID]/status
+grep "nonvoluntary_ctxt_switches" /proc/[PID]/status
+
+# Total system context switches
+grep "ctxt_switches" /proc/stat</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Linux commands: od, xxd (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">od (octal dump)</span> – Displays file contents in octal (default), hex (<code>-x</code>), decimal, or ASCII. Used to inspect binary files.</li>
+              <li><span class="hl">xxd</span> – Creates a hex dump with ASCII representation side by side. Also can reverse (convert hex back to binary). Useful for examining binary/executable files, reversing patches.</li>
+            </ul>
+            <div class="code-block">od -c file.bin      # show characters
+xxd file.bin        # hex + ASCII dump
+xxd -r patch.hex    # reverse: hex to binary</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">Non-Preemptive SJF: P1(BT=8), P2(BT=4), P3(BT=2), P4(BT=6), all arrive at t=0 (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p><strong>Execution Order</strong> (shortest first): P3 → P2 → P4 → P1</p>
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">2</div></div>
+              <div class="gantt-block"><div class="gantt-cell p4">P4</div><div class="gantt-time">6</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">12</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="min-width:10px;border:none"></div><div class="gantt-time">20</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>BT</th><th>Start</th><th>WT</th></tr>
+              <tr><td>P3</td><td>2</td><td>0</td><td>0</td></tr>
+              <tr><td>P2</td><td>4</td><td>2</td><td>2</td></tr>
+              <tr><td>P4</td><td>6</td><td>6</td><td>6</td></tr>
+              <tr><td>P1</td><td>8</td><td>12</td><td>12</td></tr>
+              <tr class="total"><td colspan="3">Avg WT</td><td>5 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         SET 4
+    ============================= -->
+    <div class="section" id="set4">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(124,77,255,.1)">📄</div>
+        <div class="section-title">Question Set 4 – Paging Address Translation + Priority Scheduling</div>
+        <span class="section-badge" style="background:rgba(124,77,255,.1);color:var(--accent2)">Set 4</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">Paging Address Translation: VA=10000, VAS=4MB, PageSize=4KB</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">Virtual Address Space = 4MB = 4×1024×1024 bytes
+Page Size = 4KB = 4096 bytes = 2^12
+Number of Pages = 4MB / 4KB = 1024 pages
+Bits for offset = 12
+
+Virtual Address = 10000
+VPN    = 10000 / 4096 = 2 (integer division)
+Offset = 10000 % 4096 = 1808
+
+If Page Table[2] = Frame 3:
+Physical Address = (3 × 4096) + 1808 = 14096
+Format: &lt;Frame 3, Offset 1808&gt;</div>
+            <p><strong>Page miss:</strong> If frame number is -1 in page table → output "PAGE TABLE MISS! Page not in physical memory."</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">Linux commands: time, top (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">time</span> – Measures real/user/sys time of a command execution</li>
+              <li><span class="hl">top</span> – Real-time dynamic display of processes (CPU%, MEM%, load average)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Address translation using hybrid paging and segmentation. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>In <span class="hl">hybrid (paged segmentation)</span>, each segment has its own page table.</p>
+            <p>Virtual address: [Segment # | Page # | Offset]</p>
+            <ol>
+              <li>Use Segment # → get segment's page table base</li>
+              <li>Use Page # → get Frame Number from that page table</li>
+              <li>Physical Address = Frame # × Page Size + Offset</li>
+            </ol>
+            <p>Benefits: logical grouping (segmentation) + fixed-size allocation (paging), no external fragmentation.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">Non-Preemptive Priority Scheduling: P1(AT=0,BT=5,P=2), P2(AT=1,BT=3,P=1), P3(AT=2,BT=4,P=3), P4(AT=3,BT=2,P=2) — lower # = higher priority (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">5</div></div>
+              <div class="gantt-block"><div class="gantt-cell p4">P4</div><div class="gantt-time">8</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">10</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="min-width:10px;border:none"></div><div class="gantt-time">14</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>CT</th><th>TAT</th><th>WT</th></tr>
+              <tr><td>P1</td><td>5</td><td>5</td><td>0</td></tr>
+              <tr><td>P2</td><td>8</td><td>7</td><td>4</td></tr>
+              <tr><td>P3</td><td>14</td><td>12</td><td>8</td></tr>
+              <tr><td>P4</td><td>10</td><td>7</td><td>5</td></tr>
+              <tr class="total"><td colspan="2">Avg</td><td>7.75 ms</td><td>4.25 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         SET 5
+    ============================= -->
+    <div class="section" id="set5">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(255,107,53,.1)">✍️</div>
+        <div class="section-title">Question Set 5 – Readers-Writers (Writer Priority) + SRTF</div>
+        <span class="section-badge" style="background:rgba(255,107,53,.1);color:var(--accent3)">Set 5</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">Readers-Writers with Writer Priority</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">// Writer priority: no new readers enter if writers waiting
+semaphore rmutex=1, wmutex=1, readTry=1, resource=1;
+int rc=0, wc=0;
+
+// WRITER
+sem_wait(&wmutex); wc++;
+if(wc==1) sem_wait(&readTry); // block new readers
+sem_post(&wmutex);
+sem_wait(&resource);          // exclusive write
+/* WRITE */
+sem_post(&resource);
+sem_wait(&wmutex); wc--;
+if(wc==0) sem_post(&readTry); // allow readers again
+sem_post(&wmutex);
+
+// READER
+sem_wait(&readTry);           // blocked if writer waiting
+sem_wait(&rmutex); rc++;
+if(rc==1) sem_wait(&resource);
+sem_post(&rmutex);
+sem_post(&readTry);
+/* READ */
+sem_wait(&rmutex); rc--;
+if(rc==0) sem_post(&resource);
+sem_post(&rmutex);</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">Explain Process API in Linux. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden"><p>See Set 1 Q4. Key calls: <span class="hl">fork()</span> – create child, <span class="hl">exec()</span> – replace image, <span class="hl">wait()</span> – sync, <span class="hl">exit()</span> – terminate, <span class="hl">getpid()/getppid()</span> – get PIDs.</p></div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Differentiate process and thread. Multithreading models. (4m)</span>
+            <span class="marks-badge">4m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>See Set 1 Q12 for process vs thread table.</p>
+            <h4>Multithreading Models</h4>
+            <ul>
+              <li><span class="hl">Many-to-One</span>: Many user threads → 1 kernel thread. Simple but no parallelism. If one blocks, all block.</li>
+              <li><span class="hl">One-to-One</span>: Each user thread → 1 kernel thread. True parallelism. More overhead. (Linux, Windows use this)</li>
+              <li><span class="hl">Many-to-Many</span>: M user threads → N kernel threads (N≤M). Best of both. Complex to implement.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">Preemptive SJF (SRTF): P1(0,8), P2(1,4), P3(2,2), P4(3,1). Gantt + Avg WT. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">1</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">P3</div><div class="gantt-time">2</div></div>
+              <div class="gantt-block"><div class="gantt-cell p4">P4</div><div class="gantt-time">4</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">P2</div><div class="gantt-time">5</div></div>
+              <div class="gantt-block"><div class="gantt-cell p1">P1</div><div class="gantt-time">8</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="min-width:10px;border:none"></div><div class="gantt-time">15</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>CT</th><th>TAT</th><th>WT</th></tr>
+              <tr><td>P1</td><td>15</td><td>15</td><td>7</td></tr>
+              <tr><td>P2</td><td>8</td><td>7</td><td>3</td></tr>
+              <tr><td>P3</td><td>4</td><td>2</td><td>0</td></tr>
+              <tr><td>P4</td><td>5</td><td>2</td><td>1</td></tr>
+              <tr class="total"><td colspan="3">Avg WT</td><td>2.75 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         SET 6
+    ============================= -->
+    <div class="section" id="set6">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(0,230,118,.1)">🔄</div>
+        <div class="section-title">Question Set 6 – FIFO/LRU Page Replacement + SRTF</div>
+        <span class="section-badge" style="background:rgba(0,230,118,.1);color:var(--green)">Set 6</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">Impl</span>
+            <span class="q-text">FIFO + LRU Page Replacement. Ref: [0,1,2,0,1,3,0,3,1,2,1], Frames=3</span>
+            <span class="marks-badge">Program</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <h4>FIFO – Evict oldest loaded page. Result: 7 faults</h4>
+            <div class="code-block">Ref:   0   1   2   0   1   3   0   3   1   2   1
+F1:    0   0   0   0   0   3   3   3   3   2   2
+F2:    -   1   1   1   1   1   0   0   0   0   0
+F3:    -   -   2   2   2   2   2   2   1   1   1
+Fault: ✓   ✓   ✓   -   -   ✓   ✓   -   -   ✓   -
+Total FIFO faults = 7</div>
+            <h4>LRU – Evict least recently used page. Result: 5 faults</h4>
+            <div class="code-block">Ref:   0   1   2   0   1   3   0   3   1   2   1
+F1:    0   0   0   0   0   0   0   0   0   2   2
+F2:    -   1   1   1   1   1   1   1   1   1   1
+F3:    -   -   2   2   2   3   3   3   3   3   3
+Fault: ✓   ✓   ✓   -   -   ✓   -   -   -   ✓   -
+Total LRU faults = 5</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V1</span>
+            <span class="q-text">Differentiate between mode switch and context switch. (2m)</span>
+            <span class="marks-badge">2m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <table class="ans-table">
+              <tr><th>Mode Switch</th><th>Context Switch</th></tr>
+              <tr><td>CPU switches between user mode and kernel mode</td><td>CPU switches from one process to another</td></tr>
+              <tr><td>Happens on every system call or interrupt</td><td>Happens when scheduler decides to run different process</td></tr>
+              <tr><td>Does NOT necessarily save all registers</td><td>Full process state (PCB) is saved and restored</td></tr>
+              <tr><td>Very fast (just flip mode bit)</td><td>Slower (save/restore PCB)</td></tr>
+              <tr><td>Same process continues after mode switch</td><td>Different process runs after context switch</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V2</span>
+            <span class="q-text">Define process states. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <ul>
+              <li><span class="hl">New</span> – Process is being created</li>
+              <li><span class="hl">Ready</span> – Process is waiting to be assigned to CPU</li>
+              <li><span class="hl">Running</span> – Process is being executed on CPU</li>
+              <li><span class="hl">Waiting/Blocked</span> – Process is waiting for I/O or event</li>
+              <li><span class="hl">Terminated</span> – Process has finished execution</li>
+            </ul>
+            <p>Transitions: New→Ready (admitted), Ready→Running (scheduled), Running→Waiting (I/O request), Waiting→Ready (I/O complete), Running→Ready (preempted), Running→Terminated (exit).</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V3</span>
+            <span class="q-text">What is shared memory in IPC? Discuss 2 builtins. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>Shared memory maps the same physical memory region into multiple processes' address spaces, allowing direct read/write.</p>
+            <div class="code-block">// Create/attach
+int shmid = shmget(IPC_PRIVATE, 1024, IPC_CREAT|0666);
+char* ptr = (char*) shmat(shmid, NULL, 0);
+
+// Use directly
+strcpy(ptr, "Hello from parent!");
+
+// Detach and remove
+shmdt(ptr);
+shmctl(shmid, IPC_RMID, NULL);</div>
+            <p><strong>shmget()</strong> – Creates or gets a shared memory segment by key. Returns shmid.<br>
+            <strong>shmat()</strong> – Attaches the segment to the calling process's address space. Returns pointer.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">V4</span>
+            <span class="q-text">SRTF: A(0,3), B(1,3), C(4,3), D(6,2). Find Avg WT, TAT, RT. (3m)</span>
+            <span class="marks-badge">3m</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>No preemption occurs here (no shorter job arrives mid-execution):</p>
+            <div class="gantt">
+              <div class="gantt-block"><div class="gantt-cell p1">A</div><div class="gantt-time">0</div></div>
+              <div class="gantt-block"><div class="gantt-cell p2">B</div><div class="gantt-time">3</div></div>
+              <div class="gantt-block"><div class="gantt-cell p4">D</div><div class="gantt-time">6</div></div>
+              <div class="gantt-block"><div class="gantt-cell p3">C</div><div class="gantt-time">8</div></div>
+              <div class="gantt-block"><div class="gantt-cell" style="min-width:10px;border:none"></div><div class="gantt-time">11</div></div>
+            </div>
+            <table class="ans-table">
+              <tr><th>Process</th><th>CT</th><th>TAT</th><th>WT</th><th>RT</th></tr>
+              <tr><td>A</td><td>3</td><td>3</td><td>0</td><td>0</td></tr>
+              <tr><td>B</td><td>6</td><td>5</td><td>2</td><td>2</td></tr>
+              <tr><td>C</td><td>11</td><td>7</td><td>4</td><td>4</td></tr>
+              <tr><td>D</td><td>8</td><td>2</td><td>0</td><td>0</td></tr>
+              <tr class="total"><td>Avg</td><td>–</td><td>4.25 ms</td><td>1.5 ms</td><td>1.5 ms</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================
+         IMPLEMENTATION LIST
+    ============================= -->
+    <div class="section" id="impl">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:rgba(255,215,64,.1)">💻</div>
+        <div class="section-title">Implementation Programs – Internal Exam</div>
+        <span class="section-badge" style="background:rgba(255,215,64,.1);color:var(--yellow)">7 Programs</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">1</span>
+            <span class="q-text">Multithreading: Thread1 prints first 20 even numbers, Thread2 prints first 20 odd numbers with synchronization.</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">#include &lt;pthread.h&gt;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int turn = 0; // 0=even, 1=odd
+
+void* even_thread(void* arg) {
+  for(int i=0; i&lt;20; i++) {
+    pthread_mutex_lock(&mutex);
+    while(turn != 0) pthread_cond_wait(&cond, &mutex);
+    printf("%d\n", 2*i+0);  // 0,2,4,...38
+    turn = 1;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&mutex);
+  }
+}
+void* odd_thread(void* arg) {
+  for(int i=0; i&lt;20; i++) {
+    pthread_mutex_lock(&mutex);
+    while(turn != 1) pthread_cond_wait(&cond, &mutex);
+    printf("%d\n", 2*i+1);  // 1,3,5,...39
+    turn = 0;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&mutex);
+  }
+}</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">2</span>
+            <span class="q-text">FCFS CPU Scheduling</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">// Sort processes by Arrival Time
+// For each process in order:
+//   start_time = max(current_time, arrival_time)
+//   CT = start_time + burst_time
+//   TAT = CT - AT
+//   WT = TAT - BT
+//   current_time = CT</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">3</span>
+            <span class="q-text">Readers-Writers Problem (Reader Priority)</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>See Set 1 C2 for the complete semaphore-based solution with reader priority.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">4</span>
+            <span class="q-text">Dining Philosophers (deadlock-free semaphore solution)</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <p>See Set 3 Impl for the reversed-order-last-philosopher solution using semaphores.</p>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">5</span>
+            <span class="q-text">Paging Address Translation</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">// Command line: ./paging vas_mb pagesize_kb virtual_address
+// 1. num_pages = (vas_mb * 1024 * 1024) / (pagesize_kb * 1024)
+// 2. page_table[num_pages] – get from user input
+// 3. VPN = VA / page_size; Offset = VA % page_size
+// 4. If page_table[VPN] == -1: PAGE TABLE MISS
+// 5. Else: PA = page_table[VPN] * page_size + Offset
+//    Print: &lt;frame, offset&gt; and physical address</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">6</span>
+            <span class="q-text">FIFO Page Replacement Algorithm</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">// Use a queue (circular array) of size = num_frames
+// For each page reference:
+//   if page in frames: no fault
+//   else: fault++
+//     if frames not full: add page to frames
+//     else: evict front of queue (oldest), add new page to rear</div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="q-row">
+            <span class="q-num">7</span>
+            <span class="q-text">LOOK Disk Scheduling Algorithm</span>
+            <button class="toggle-ans" onclick="toggleAns(this)">Show</button>
+          </div>
+          <div class="answer hidden">
+            <div class="code-block">// Sort requests. Start from head.
+// Go in one direction (e.g., upward), service all requests
+// until no more requests in that direction (unlike SCAN,
+// don't go to the physical end of disk).
+// Reverse direction, service remaining requests.
+// Count absolute differences for total head movement.
+
+// LOOK upward from head=53, requests sorted: 14,41,65,67,98,122,124,183
+// First go up: 65,67,98,122,124,183
+// Then go down: 41,14
+// Total = (183-53)+(183-14) = 130+169 = 299</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main-grid -->
+
+<footer>
+  <p>PCCSL407 – Operating Systems Lab · Compiled by Ms. Divya Christopher, Asst. Prof in CSE, LMCST, Kuttichal</p>
+  <p style="margin-top:.5rem;color:var(--border)">Internal Exam: 50 marks · End Semester: 50 marks · Total: 100 marks</p>
+</footer>
+
+<script>
+// Toggle sections
+function toggleSection(header) {
+  header.parentElement.classList.toggle('collapsed');
+}
+
+// Toggle individual answers
+function toggleAns(btn) {
+  const row = btn.closest('.q-row');
+  const ans = row.nextElementSibling;
+  if (ans.classList.contains('hidden')) {
+    ans.classList.remove('hidden');
+    btn.textContent = 'Hide';
+  } else {
+    ans.classList.add('hidden');
+    btn.textContent = 'Show';
+  }
+}
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / docH) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// Search functionality
+document.getElementById('searchBox').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  const items = document.querySelectorAll('.qa-item');
+  if (!q) {
+    items.forEach(item => item.style.display = '');
+    document.querySelectorAll('.section').forEach(s => s.style.display = '');
+    return;
+  }
+  document.querySelectorAll('.section').forEach(section => {
+    const sectionItems = section.querySelectorAll('.qa-item');
+    let sectionVisible = false;
+    sectionItems.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(q)) {
+        item.style.display = '';
+        sectionVisible = true;
+        // Auto-expand section
+        section.classList.remove('collapsed');
+      } else {
+        item.style.display = 'none';
+      }
+    });
+    section.style.display = sectionVisible ? '' : 'none';
+  });
+});
+
+// Expand all on load
+document.querySelectorAll('.section').forEach(s => s.classList.remove('collapsed'));
+</script>
+</body>
+</html>
